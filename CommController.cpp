@@ -11,7 +11,10 @@ CommController::CommController() : AbstractTask() {
 }
 
 void CommController::init() {
-  
+  LOG_PRINTLN(F("Available commands:"));
+  LOG_PRINTLN(F("sl[0-9] -> speed left"));
+  LOG_PRINTLN(F("sr[0-9] -> speed right"));
+  LOG_PRINTLN(F("sm[1-9] -> smell"));
 }
 
 void CommController::update() {
