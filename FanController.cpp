@@ -12,8 +12,8 @@ void FanController::init() {
   pinMode(MOSFET_PIN_LEFT, OUTPUT);
   pinMode(MOSFET_PIN_RIGHT, OUTPUT);
 
-  analogWrite(MOSFET_PIN_LEFT, 0);
-  analogWrite(MOSFET_PIN_RIGHT, 0);
+  analogWrite(MOSFET_PIN_LEFT, SPEED_MIN);
+  analogWrite(MOSFET_PIN_RIGHT, SPEED_MIN);
 
   for (uint8_t i=0;i<SPEED_COUNT;i++) {
     speeds[i].registerValueChangeListener(this);
@@ -24,10 +24,50 @@ void FanController::init() {
 void FanController::update() {
 }
 
+uint8_t FanController::getSpeedLevel(uint8_t index) {
+  return speeds[index].getValue();
+}
+
 void FanController::setSpeedLevel(uint8_t index, uint8_t speedLevel) {
+  if (speedLevel>SPEED_MAX) return;
+  
   index = constrain(index, 0, SPEED_COUNT-1);
-  uint8_t speed = map(speedLevel, 0, 9, 0, 255);
-  speeds[index].setValue(speed);
+  uint8_t speedValue = 0;
+
+  switch(speedLevel) {
+    case 0: 
+      speedValue = 0;
+      break;
+    case 1:
+      speedValue = 10;
+      break;
+    case 2:
+      speedValue = 14;
+      break;
+    case 3:
+      speedValue = 20;
+      break;
+    case 4:
+      speedValue = 32;
+      break;
+    case 5:
+      speedValue = 45;
+      break;
+    case 6:
+      speedValue = 60;
+      break;
+    case 7:
+      speedValue = 80;
+      break;
+    case 8:
+      speedValue = 110;
+      break;
+    case 9:
+      speedValue = 255;
+      break;
+  }
+  
+  speeds[index].setValue(speedValue);
 }
 
 
