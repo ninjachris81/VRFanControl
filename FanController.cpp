@@ -18,10 +18,17 @@ void FanController::init() {
   for (uint8_t i=0;i<SPEED_COUNT;i++) {
     speeds[i].registerValueChangeListener(this);
     speeds[i].init(i, 0);
+    boosts[i] = false;
   }
 }
 
 void FanController::update() {
+  for (uint8_t i=0;i<SPEED_COUNT;i++) {
+    if (boosts[i]) {
+      
+      boosts[i] = false;
+    }
+  }
 }
 
 uint8_t FanController::getSpeedLevel(uint8_t index) {
@@ -71,13 +78,13 @@ void FanController::setSpeedLevel(uint8_t index, uint8_t speedLevel) {
 }
 
 
-void FanController::onPropertyValueChange(uint8_t id, uint8_t value) {
+void FanController::onPropertyValueChange(uint8_t id, uint8_t newValue, uint8_t oldValue) {
   LOG_PRINT(F("Speed "));
   LOG_PRINT(id);
   LOG_PRINT(": ");
-  LOG_PRINTLN(value);
+  LOG_PRINTLN(newValue);
   
-  if (id==SPEED_LEFT) analogWrite(MOSFET_PIN_LEFT, value);
-  if (id==SPEED_RIGHT) analogWrite(MOSFET_PIN_RIGHT, value);
+  if (id==SPEED_LEFT) analogWrite(MOSFET_PIN_LEFT, newValue);
+  if (id==SPEED_RIGHT) analogWrite(MOSFET_PIN_RIGHT, newValue);
 }
 

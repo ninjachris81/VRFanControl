@@ -27,10 +27,11 @@ public:
 
   uint8_t getSpeedLevel(uint8_t index);
 
-  void onPropertyValueChange(uint8_t id, uint8_t value);
+  void onPropertyValueChange(uint8_t id, uint8_t newValue, uint8_t oldValue);
 
 private:
   Property<uint8_t> speeds[SPEED_COUNT];
+  bool boosts[SPEED_COUNT];
   
 };
 
