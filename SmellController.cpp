@@ -29,7 +29,7 @@ void SmellController::update() {
       smellPhase = SMELL_VAPO;
       
       digitalWrite(PIN_SMELL, LOW);   // smell on
-      triggerUpdateDelay(currrentIntensity);
+      //triggerUpdateDelay(currentIntensity);
       break;
     case SMELL_VAPO:
       smellPhase = SMELL_DELAY_FAN;
@@ -38,25 +38,31 @@ void SmellController::update() {
       break;
     case SMELL_DELAY_FAN:
       smellPhase = SMELL_OFF;
-      taskManager->getTask<FanController*>(FAN_CONTROLLER)->setSpeedLevel(SPEED_RIGHT, orgSpeedLevel);
+      taskManager->getTask<FanController*>(FAN_CONTROLLER)->restoreCurrentSpeeds();
       break;
   }
 }
 
-void SmellController::releaseSmell(uint16_t intensity) {
-  if (intensity<=0 || intensity>9999) return;
+void SmellController::releaseSmell(SmellController::SMELL_LOCATION location, uint8_t count) {
+  if (count>10) return;
   if (smellPhase!=SMELL_OFF) {
     LOG_PRINTLN(F("Smell ongoing"));
     return;
   }
   
-  currrentIntensity = intensity;
+  currentEmitCount = count;
+  currentLocation = location;
   
-  LOG_PRINT(F("Setting smell for "));
-  LOG_PRINTLN(currrentIntensity);
+  LOG_PRINT(F("Setting smell at"));
+  LOG_PRINT(location);
+  LOG_PRINT(F(", count "));
+  LOG_PRINTLN(count);
 
   smellPhase = SMELL_INIT_FAN;
-  orgSpeedLevel = taskManager->getTask<FanController*>(FAN_CONTROLLER)->getSpeedLevel(SPEED_RIGHT);
-  taskManager->getTask<FanController*>(FAN_CONTROLLER)->setSpeedLevel(SPEED_RIGHT, 5);
+
+  taskManager->getTask<FanController*>(FAN_CONTROLLER)->saveCurrentSpeeds();
+  
+  taskManager->getTask<FanController*>(FAN_CONTROLLER)->setSpeedLevel(FanController::SPEED_LOCATION_RIGHT, EMIT_SPEED_LEVEL);
+  taskManager->getTask<FanController*>(FAN_CONTROLLER)->setSpeedLevel(FanController::SPEED_LOCATION_LEFT, EMIT_SPEED_LEVEL);
   triggerUpdateDelay(500);    // give the fan 500 ms to turn on
 }

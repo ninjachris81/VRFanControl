@@ -2,8 +2,9 @@
 #define COMMCONTROLLER_H
 
 #include <AbstractTask.h>
+#include "CommHandler.h"
 
-class CommController : public AbstractTask {
+class CommController : public AbstractTask, public CommHandler {
 public:
   CommController();
 

@@ -1,0 +1,5 @@
+#define PIN_MOSFET_LEFT 9
+#define PIN_MOSFET_RIGHT 10
+
+#define PIN_SMELL 3
+

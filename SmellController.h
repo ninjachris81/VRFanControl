@@ -2,8 +2,9 @@
 #define SMELLCONTROLLER_H
 
 #include <AbstractTriggerTask.h>
+#include "Pins.h"
 
-#define PIN_SMELL 3
+#define EMIT_SPEED_LEVEL 5
 
 class SmellController : public AbstractTriggerTask {
 public:
@@ -15,16 +16,23 @@ public:
     SMELL_VAPO,
     SMELL_DELAY_FAN
   };
-  
+
+  enum SMELL_LOCATION {
+    SMELL_LOCATION_INVALID = 0,
+    SMELL_LOCATION_LEFT,
+    SMELL_LOCATION_MIDDLE,
+    SMELL_LOCATION_RIGHT
+  };
+
   void init();
 
   void update();
 
-  void releaseSmell(uint16_t intensity);
+  void releaseSmell(SMELL_LOCATION location, uint8_t count);
   
 private:
-  uint8_t orgSpeedLevel;
-  uint16_t currrentIntensity;
+  uint8_t currentEmitCount = 0;
+  SMELL_LOCATION currentLocation = SMELL_LOCATION_INVALID;
   SMELL_PHASE smellPhase = SMELL_OFF;
   
 };
