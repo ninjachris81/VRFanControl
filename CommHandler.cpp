@@ -11,6 +11,11 @@ CommHandler::CommHandler() {
 }
 
 void CommHandler::handlePackage(TaskManager* taskManager, uint8_t* data) {
+  uint8_t value = data[2] - '0';
+
+  LOG_PRINT(F("Data: "));
+  for (uint8_t i=0;i<DATA_PACKAGE_SIZE;i++) LOG_PRINTF(data[i], DEC);
+  LOG_PRINTLN("");
   
   switch(data[0]) {
     case CMD_PING:
@@ -31,11 +36,13 @@ void CommHandler::handlePackage(TaskManager* taskManager, uint8_t* data) {
           break;
         default:
           // invalid
+          LOG_PRINT(F("Invalid location "));
+          LOG_PRINTLNF(data[1], HEX);
           break;
       }
       
       if (location != SmellController::SMELL_LOCATION_INVALID) {
-        taskManager->getTask<SmellController*>(SMELL_CONTROLLER)->releaseSmell(location, data[2]);
+        taskManager->getTask<SmellController*>(SMELL_CONTROLLER)->releaseSmell(location, value);
       }
       break;
     }
@@ -51,21 +58,21 @@ void CommHandler::handlePackage(TaskManager* taskManager, uint8_t* data) {
           break;
         default:
           // invalid
+          LOG_PRINT(F("Invalid location "));
+          LOG_PRINTLNF(data[1], HEX);
           break;
       }
       
       if (location != FanController::SPEED_LOCATION_INVALID) {
-        taskManager->getTask<FanController*>(FAN_CONTROLLER)->setSpeedLevel(location, data[2]);
+        taskManager->getTask<FanController*>(FAN_CONTROLLER)->setSpeedLevel(location, value);
       }
       break;
     }
     default:
       LOG_PRINT(F("Unknown command "));
-      LOG_PRINTLN(data[0]);
+      LOG_PRINTLNF(data[0], HEX);
       break;
   }
-
-
 
   
 }

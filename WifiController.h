@@ -6,6 +6,9 @@
 #include <ESP8266WebServer.h>
 #include "CommHandler.h"
 
+#define AP_WIFI_NAME "FAW_Control"
+#define ENABLE_BASIC_AUTH
+
 class WifiController : public AbstractTask, public CommHandler {
 public:
   WifiController();

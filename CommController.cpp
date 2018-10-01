@@ -19,8 +19,12 @@ void CommController::update() {
     uint8_t data[DATA_PACKAGE_SIZE];
     for (uint8_t i=0;i<DATA_PACKAGE_SIZE;i++) {
       int d = Serial.read();
+      if (d==-1 || d==10 || d==13) return;
+      
       data[i] = d;
     }
+    
+    Serial.read();    // ignore
     
     handlePackage(taskManager, data);
   }
