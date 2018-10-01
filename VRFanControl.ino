@@ -29,7 +29,7 @@ ServoController servoController;
 void setup() {
   LOG_INIT();
   LOG_WAIT();
-  
+
   taskManager.registerTask(&fanController);
   taskManager.registerTask(&smellController);
   taskManager.registerTask(&servoController);

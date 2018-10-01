@@ -15,6 +15,9 @@ void ServoController::update() {
 }
 
 void ServoController::triggerAction(uint8_t index) {
+  LOG_PRINT(F("Trigger action "));
+  LOG_PRINTLN(index);
+  
   //double pulselength = map(degrees, 0, 180, SERVOMIN, SERVOMAX);
   //servoDriver.setPWM(index, 0, pulselength);
 }
@@ -22,4 +25,3 @@ void ServoController::triggerAction(uint8_t index) {
 int ServoController::getServoAngle(uint8_t index) {
   
 }
-

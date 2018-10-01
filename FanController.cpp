@@ -35,8 +35,15 @@ uint8_t FanController::getSpeedLevel(SPEED_LOCATION location) {
 }
 
 void FanController::setSpeedLevel(SPEED_LOCATION location, uint8_t speedLevel) {
-  if (speedLevel>SPEED_MAX) return;
-  
+  speedLevel = constrain(speedLevel, SPEED_MIN, SPEED_MAX);
+
+  /*
+  LOG_PRINT(F("Setting speed "));
+  LOG_PRINT(location);
+  LOG_PRINT(" ");
+  LOG_PRINTLN(speedLevel);
+  */
+
   uint8_t speedValue = 0;
 
   switch(speedLevel) {
@@ -85,4 +92,3 @@ void FanController::onPropertyValueChange(uint8_t id, uint8_t newValue, uint8_t 
   if (id==SPEED_LOCATION_LEFT) analogWrite(PIN_MOSFET_LEFT, newValue);
   if (id==SPEED_LOCATION_RIGHT) analogWrite(PIN_MOSFET_RIGHT, newValue);
 }
-

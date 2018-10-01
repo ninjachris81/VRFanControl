@@ -3,22 +3,12 @@
 #include <LogHelper.h>
 #include "TaskIDs.h"
 #include "FanController.h"
+#include "ServoController.h"
 
 SmellController::SmellController() : AbstractTriggerTask() {
 }
 
 void SmellController::init() {
-  pinMode(PIN_SMELL, OUTPUT);
-  digitalWrite(PIN_SMELL, HIGH);
-
-  // turn on
-  /*
-  for (uint8_t i=0;i<5;i++) {
-    digitalWrite(PIN_SMELL, HIGH);
-    delay(200);
-    digitalWrite(PIN_SMELL, LOW);
-    delay(200);
-  }*/
 }
 
 void SmellController::update() {
@@ -26,17 +16,23 @@ void SmellController::update() {
     case SMELL_OFF:
       break;
     case SMELL_INIT_FAN:
-      smellPhase = SMELL_VAPO;
+      LOG_PRINT(F("Trigger servo "));
+      LOG_PRINTLN(currentEmitCount);
       
-      digitalWrite(PIN_SMELL, LOW);   // smell on
-      //triggerUpdateDelay(currentIntensity);
+      currentEmitCount--;
+      if (currentEmitCount==0) smellPhase = SMELL_VAPO;
+      
+      taskManager->getTask<ServoController*>(SERVO_CONTROLLER)->triggerAction(currentLocation);
+
+      triggerUpdateDelay(1000);     // duration of triggeraction
       break;
     case SMELL_VAPO:
+      LOG_PRINTLN(F("Fan delay"));
       smellPhase = SMELL_DELAY_FAN;
-      digitalWrite(PIN_SMELL, HIGH);  // smell off
       triggerUpdateDelay(1000);     // delay the fan for 1 sec
       break;
     case SMELL_DELAY_FAN:
+      LOG_PRINTLN(F("Smell finished"));
       smellPhase = SMELL_OFF;
       taskManager->getTask<FanController*>(FAN_CONTROLLER)->restoreCurrentSpeeds();
       break;
@@ -53,16 +49,18 @@ void SmellController::releaseSmell(SmellController::SMELL_LOCATION location, uin
   currentEmitCount = count;
   currentLocation = location;
   
-  LOG_PRINT(F("Setting smell at"));
+  LOG_PRINT(F("Setting smell at "));
   LOG_PRINT(location);
   LOG_PRINT(F(", count "));
   LOG_PRINTLN(count);
 
   smellPhase = SMELL_INIT_FAN;
+  LOG_PRINTLN(F("Init fan"));
 
   taskManager->getTask<FanController*>(FAN_CONTROLLER)->saveCurrentSpeeds();
   
-  taskManager->getTask<FanController*>(FAN_CONTROLLER)->setSpeedLevel(FanController::SPEED_LOCATION_RIGHT, EMIT_SPEED_LEVEL);
   taskManager->getTask<FanController*>(FAN_CONTROLLER)->setSpeedLevel(FanController::SPEED_LOCATION_LEFT, EMIT_SPEED_LEVEL);
+  taskManager->getTask<FanController*>(FAN_CONTROLLER)->setSpeedLevel(FanController::SPEED_LOCATION_RIGHT, EMIT_SPEED_LEVEL);
+  
   triggerUpdateDelay(500);    // give the fan 500 ms to turn on
 }

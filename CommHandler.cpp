@@ -14,7 +14,9 @@ void CommHandler::handlePackage(TaskManager* taskManager, uint8_t* data) {
   uint8_t value = data[2] - '0';
 
   LOG_PRINT(F("Data: "));
-  for (uint8_t i=0;i<DATA_PACKAGE_SIZE;i++) LOG_PRINTF(data[i], DEC);
+  for (uint8_t i=0;i<DATA_PACKAGE_SIZE;i++) {
+    LOG_PRINT(String((char)data[i]) + " ");
+  }
   LOG_PRINTLN("");
   
   switch(data[0]) {
@@ -76,4 +78,3 @@ void CommHandler::handlePackage(TaskManager* taskManager, uint8_t* data) {
 
   
 }
-

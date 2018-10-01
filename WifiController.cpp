@@ -8,6 +8,7 @@
 #include "FanController.h"
 
 WifiController* WifiController::mInstance;
+DNSServer WifiController::dnsServer;
 
 ESP8266WebServer* WifiController::webServer;
 WiFiServer* WifiController::dataServer;
@@ -23,22 +24,37 @@ WifiController* WifiController::instance() {
 }
 
 void WifiController::init() {
-  WiFi.mode(WIFI_AP);
-  WiFi.softAP(AP_WIFI_NAME, WIFI_PASSWORD, 1, 1);    // channel 1 and hidden
+  LOG_PRINTLN(F("Setting AP"));
+  
+  if (WiFi.softAP(AP_WIFI_NAME, WIFI_PASSWORD, 1, AP_VISIBILITY)) {
+    LOG_PRINT(F("AP IP: "));
+    LOG_PRINTLN(WiFi.softAPIP().toString());
 
+    dnsServer.setTTL(300);
+    dnsServer.setErrorReplyCode(DNSReplyCode::ServerFailure);
+    dnsServer.start(DNS_PORT, WEBSERVER_DNS_NAME, WiFi.softAPIP());
+    
+//    WiFi.config(WiFi.softAPIP(), WEBSERVER_DNS_NAME);
+  } else {
+    LOG_PRINTLN(F("Failed to set AP"));
+  }
+
+  LOG_PRINTLN(F("Init web server"));
   webServer = new ESP8266WebServer(80);
-  dataServer = new WiFiServer(8080);
-
   webServer->on("/", &WifiController::onWebserverStatusPage);
+  webServer->on("/style.css", &WifiController::onWebserverCss);
   webServer->onNotFound(&WifiController::onWebserverNotFound);
   webServer->begin();
 
+  LOG_PRINTLN(F("Init data server"));
+  dataServer = new WiFiServer(8080);
   dataServer->begin();
 }
 
 void WifiController::update() {
   updateDataServer();
   webServer->handleClient();
+  dnsServer.processNextRequest();
 }
 
 void WifiController::updateDataServer() {
@@ -57,7 +73,7 @@ void WifiController::updateDataServer() {
 }
 
 void WifiController::onWebserverStatusPage() {
-  String s = F("<!DOCTYPE html><html><head><META HTTP-EQUIV=\"refresh\" content=\"10\"><title>Demo Status</title><body>");
+  String s = F("<!DOCTYPE html><html><head><link rel=\"stylesheet\" type=\"text/css\" href=\"style.css\"><META HTTP-EQUIV=\"refresh\" content=\"10\"><title>Demo Status</title><body>");
 
 #ifdef ENABLE_BASIC_AUTH
   if (!webServer->authenticate(BASICAUTH_USERNAME, BASICAUTH_PASSWORD)) {
@@ -79,13 +95,18 @@ void WifiController::onWebserverStatusPage() {
   s+=(int)(millis()/1000);
   s+=F(" sec<br>");
 
+  // ip
+  s+=F("IP: ");
+  s+=WiFi.softAPIP().toString();
+  s+=F("<br>");
+  
   // S/N rate
   s+=F("S/N: ");
   s+=WiFi.RSSI();
   s+=F("<br>");
 
   // Servos
-  s+=F("Servo States:<table>");
+  s+=F("<table><th>Servo States</th>");
   for (uint8_t i=0;i<SERVO_COUNT;i++) {
     s+=F("<tr><td>Servo ");
     s+=i;
@@ -96,7 +117,7 @@ void WifiController::onWebserverStatusPage() {
   s+=F("</table><br>");
 
   // Fans
-  s+=F("<br>Servo States:<table>");
+  s+=F("<table><th>Servo States</th>");
   for (uint8_t i=0;i<SPEED_COUNT;i++) {
     s+=F("<tr><td>Fan ");
     s+=i;
@@ -111,7 +132,11 @@ void WifiController::onWebserverStatusPage() {
   webServer->send(200, "text/html", s);
 }
 
+void WifiController::onWebserverCss() {
+  String s = F("td{border:1px solid #dddddd;}th{background-color: #dddddd;}");
+  webServer->send(200, "text/css", s);
+}
+
 void WifiController::onWebserverNotFound() {
   webServer->send(404, "text/plain", "404: Not found");
 }
-

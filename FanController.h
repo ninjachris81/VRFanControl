@@ -15,8 +15,8 @@ public:
   FanController();
 
   enum SPEED_LOCATION {
-    SPEED_LOCATION_INVALID = 0,
-    SPEED_LOCATION_LEFT,
+    SPEED_LOCATION_INVALID = -1,
+    SPEED_LOCATION_LEFT = 0,
     SPEED_LOCATION_RIGHT
   };
   
