@@ -22,7 +22,7 @@ void SmellController::update() {
       currentEmitCount--;
       if (currentEmitCount==0) smellPhase = SMELL_VAPO;
       
-      taskManager->getTask<ServoController*>(SERVO_CONTROLLER)->triggerAction(currentLocation);
+      taskManager->getTask<ServoController*>(SERVO_CONTROLLER)->triggerAction(currentLocation-1);
 
       triggerUpdateDelay(1000);     // duration of triggeraction
       break;

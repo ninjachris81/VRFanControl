@@ -2,7 +2,7 @@
 #include <TaskManager.h>
 
 // either wifi or serial
-#define USE_WIFI
+//#define USE_WIFI
 
 #include "FanController.h"
 #include "SmellController.h"

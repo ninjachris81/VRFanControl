@@ -106,6 +106,7 @@ void WifiController::onWebserverStatusPage() {
   s+=F("<br>");
 
   // Servos
+  /*
   s+=F("<table><th>Servo States</th>");
   for (uint8_t i=0;i<SERVO_COUNT;i++) {
     s+=F("<tr><td>Servo ");
@@ -115,6 +116,7 @@ void WifiController::onWebserverStatusPage() {
     s+=F("&deg;</tr></td><br>");
   }
   s+=F("</table><br>");
+  */
 
   // Fans
   s+=F("<table><th>Servo States</th>");
