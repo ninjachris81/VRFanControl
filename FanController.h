@@ -5,10 +5,10 @@
 #include <Property.h>
 #include "Pins.h"
 
-#define SPEED_COUNT 2
+#define FAN_COUNT 2
 
-#define SPEED_MAX 9
-#define SPEED_MIN 0
+#define FAN_SPEED_MAX 9
+#define FAN_SPEED_MIN 0
 
 class FanController : public AbstractTriggerTask, public Property<uint8_t>::ValueChangeListener {
 public:
@@ -17,7 +17,8 @@ public:
   enum SPEED_LOCATION {
     SPEED_LOCATION_INVALID = -1,
     SPEED_LOCATION_LEFT = 0,
-    SPEED_LOCATION_RIGHT
+    SPEED_LOCATION_RIGHT,
+    SPEED_LOCATION_SMELL
   };
   
   void init();
@@ -35,9 +36,9 @@ public:
   void restoreCurrentSpeeds();
 
 private:
-  Property<uint8_t> speeds[SPEED_COUNT];
+  Property<uint8_t> speeds[FAN_COUNT];
 
-  uint8_t savedSpeeds[SPEED_COUNT];
+  uint8_t savedSpeeds[FAN_COUNT];
 };
 
 

@@ -6,6 +6,7 @@
 #include <Adafruit_PWMServoDriver.h>
 
 #define SERVO_COUNT 3
+#define SERVO_ACTION_DURATION 500
 
 #define SERVOMIN 1800
 #define SERVOMAX 2900

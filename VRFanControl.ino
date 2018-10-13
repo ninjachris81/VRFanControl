@@ -7,6 +7,7 @@
 #include "FanController.h"
 #include "SmellController.h"
 #include "ServoController.h"
+#include "SeatController.h"
 
 #ifdef USE_WIFI
   #include "WifiController.h"
@@ -19,6 +20,7 @@ TaskManager taskManager;
 FanController fanController;
 SmellController smellController;
 ServoController servoController;
+SeatController seatController;
 
 #ifdef USE_WIFI
   WifiController wifiController;
@@ -33,6 +35,8 @@ void setup() {
   taskManager.registerTask(&fanController);
   taskManager.registerTask(&smellController);
   taskManager.registerTask(&servoController);
+  taskManager.registerTask(&seatController);
+  
 #ifdef USE_WIFI
   taskManager.registerTask(&wifiController);
 #else

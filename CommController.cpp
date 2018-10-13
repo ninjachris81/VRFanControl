@@ -9,9 +9,10 @@ CommController::CommController() : AbstractTask() {
 
 void CommController::init() {
   LOG_PRINTLN(F("Available commands:"));
-  //LOG_PRINTLN(F("sl[0-9] -> speed left"));
-  //LOG_PRINTLN(F("sr[0-9] -> speed right"));
-  //LOG_PRINTLN(F("sm[1-9999] -> smell"));
+  LOG_PRINTLN(F("p -> ping"));
+  LOG_PRINTLN(F("v[r|m|l][0...9] -> vapo"));
+  LOG_PRINTLN(F("f[l|r][0...9] -> fan"));
+  LOG_PRINTLN(F("s[f|b] -> seat fwd/back"));
 }
 
 void CommController::update() {
@@ -29,4 +30,3 @@ void CommController::update() {
     handlePackage(taskManager, data);
   }
 }
-

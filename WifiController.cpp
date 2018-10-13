@@ -120,7 +120,7 @@ void WifiController::onWebserverStatusPage() {
 
   // Fans
   s+=F("<table><th>Servo States</th>");
-  for (uint8_t i=0;i<SPEED_COUNT;i++) {
+  for (uint8_t i=0;i<FAN_COUNT;i++) {
     s+=F("<tr><td>Fan ");
     s+=i;
     s+=F(": ");

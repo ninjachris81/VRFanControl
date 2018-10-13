@@ -24,5 +24,5 @@ void ServoController::triggerAction(uint8_t index) {
   currentIndex = index;
   
   servoDriver.setPWM(index, 0, SERVOMAX);
-  triggerUpdateDelay(500);
+  triggerUpdateDelay(SERVO_ACTION_DURATION);
 }

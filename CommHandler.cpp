@@ -4,6 +4,7 @@
 
 #include "SmellController.h"
 #include "FanController.h"
+#include "SeatController.h"
 #include "Protocol.h"
 #include "TaskIDs.h"
 
@@ -23,7 +24,7 @@ void CommHandler::handlePackage(TaskManager* taskManager, uint8_t* data) {
     case CMD_PING:
       // do nothing
       break;
-    case CMD_SMELL: {
+    case CMD_VAPO: {
       SmellController::SMELL_LOCATION location = SmellController::SMELL_LOCATION_INVALID;
   
       switch(data[1]) {
@@ -68,6 +69,24 @@ void CommHandler::handlePackage(TaskManager* taskManager, uint8_t* data) {
       if (location != FanController::SPEED_LOCATION_INVALID) {
         taskManager->getTask<FanController*>(FAN_CONTROLLER)->setSpeedLevel(location, value);
       }
+      break;
+    }
+    case CMD_SEAT: {
+      SeatController::SEAT_DIRECTION direction = SeatController::SEAT_INVALID;
+      
+      switch(data[1]) {
+        case CMD_FORWARD:
+          direction = SeatController::SEAT_FORWARD;
+          break;
+        case CMD_BACKWARD:
+          direction = SeatController::SEAT_BACKWARD;
+          break;
+      }
+
+      if (direction!=SeatController::SEAT_INVALID) {
+        taskManager->getTask<SeatController*>(SEAT_CONTROLLER)->moveSeat(direction);
+      }
+
       break;
     }
     default:

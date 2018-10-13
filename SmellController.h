@@ -4,7 +4,8 @@
 #include <AbstractTriggerTask.h>
 #include "Pins.h"
 
-#define EMIT_SPEED_LEVEL 5
+#define EMIT_SPEED_LEVEL_LEFT_RIGHT 5
+#define EMIT_SPEED_LEVEL_MAIN 5
 
 class SmellController : public AbstractTriggerTask {
 public:
