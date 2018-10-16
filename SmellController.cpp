@@ -35,7 +35,7 @@ void SmellController::update() {
       LOG_PRINTLN(F("Smell finished"));
       smellPhase = SMELL_OFF;
       taskManager->getTask<FanController*>(FAN_CONTROLLER)->restoreCurrentSpeeds();
-      taskManager->getTask<FanController*>(FAN_CONTROLLER)->setSpeedLevel(FanController::SPEED_LOCATION_RIGHT, FAN_SPEED_MIN);
+      taskManager->getTask<FanController*>(FAN_CONTROLLER)->setSpeedLevel(FanController::SPEED_LOCATION_SMELL, FAN_SPEED_MIN);
       break;
   }
 }
@@ -62,7 +62,7 @@ void SmellController::releaseSmell(SmellController::SMELL_LOCATION location, uin
   
   taskManager->getTask<FanController*>(FAN_CONTROLLER)->setSpeedLevel(FanController::SPEED_LOCATION_LEFT, EMIT_SPEED_LEVEL_LEFT_RIGHT);
   taskManager->getTask<FanController*>(FAN_CONTROLLER)->setSpeedLevel(FanController::SPEED_LOCATION_RIGHT, EMIT_SPEED_LEVEL_LEFT_RIGHT);
-  taskManager->getTask<FanController*>(FAN_CONTROLLER)->setSpeedLevel(FanController::SPEED_LOCATION_RIGHT, EMIT_SPEED_LEVEL_MAIN);
+  taskManager->getTask<FanController*>(FAN_CONTROLLER)->setSpeedLevel(FanController::SPEED_LOCATION_SMELL, EMIT_SPEED_LEVEL_MAIN);
   
   triggerUpdateDelay(500);    // give the fan 500 ms to turn on
 }

@@ -9,7 +9,7 @@
 #define SERVO_ACTION_DURATION 500
 
 #define SERVOMIN 1800
-#define SERVOMAX 2900
+#define SERVOMAX 2600
 
 class ServoController : public AbstractTriggerTask {
 public:

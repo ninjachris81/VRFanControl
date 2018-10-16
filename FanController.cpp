@@ -12,6 +12,7 @@ void FanController::init() {
 
   analogWrite(PIN_MOSFET_LEFT, 0);
   analogWrite(PIN_MOSFET_RIGHT, 0);
+  analogWrite(PIN_MOSFET_SMELL, 0);
 
   for (uint8_t i=0;i<FAN_COUNT;i++) {
     speeds[i].registerValueChangeListener(this);
@@ -48,4 +49,5 @@ void FanController::onPropertyValueChange(uint8_t id, uint8_t newValue, uint8_t 
   
   if (id==SPEED_LOCATION_LEFT) analogWrite(PIN_MOSFET_LEFT, pwmValue);
   if (id==SPEED_LOCATION_RIGHT) analogWrite(PIN_MOSFET_RIGHT, pwmValue);
+  if (id==SPEED_LOCATION_SMELL) analogWrite(PIN_MOSFET_SMELL, pwmValue);
 }

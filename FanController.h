@@ -5,7 +5,7 @@
 #include <Property.h>
 #include "Pins.h"
 
-#define FAN_COUNT 2
+#define FAN_COUNT 3
 
 #define FAN_SPEED_MAX 9
 #define FAN_SPEED_MIN 0
