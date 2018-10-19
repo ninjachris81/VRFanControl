@@ -2,7 +2,7 @@
 #include <TaskManager.h>
 
 // either wifi or serial
-//#define USE_WIFI
+#define USE_WIFI
 
 #include "FanController.h"
 #include "SmellController.h"
@@ -30,7 +30,7 @@ SeatController seatController;
 
 void setup() {
   LOG_INIT();
-  LOG_WAIT();
+  //LOG_WAIT();
 
   taskManager.registerTask(&fanController);
   taskManager.registerTask(&smellController);

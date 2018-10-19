@@ -23,10 +23,15 @@ WifiController* WifiController::instance() {
   return mInstance;
 }
 
+bool WifiController::useInitWDT() {
+  return false;
+}
+
 void WifiController::init() {
   LOG_PRINTLN(F("Setting AP"));
-  
-  if (WiFi.softAP(AP_WIFI_NAME, WIFI_PASSWORD, 1, AP_VISIBILITY)) {
+
+  WiFi.disconnect();
+  if (WiFi.softAP(AP_WIFI_NAME, WIFI_PASSWORD, AP_CHANNEL, AP_VISIBILITY)) {
     LOG_PRINT(F("AP IP: "));
     LOG_PRINTLN(WiFi.softAPIP().toString());
 
@@ -43,6 +48,9 @@ void WifiController::init() {
   webServer = new ESP8266WebServer(80);
   webServer->on("/", &WifiController::onWebserverStatusPage);
   webServer->on("/style.css", &WifiController::onWebserverCss);
+
+  webServer->on("/test", &WifiController::onWebserverTest);
+  
   webServer->onNotFound(&WifiController::onWebserverNotFound);
   webServer->begin();
 
@@ -129,6 +137,8 @@ void WifiController::onWebserverStatusPage() {
   }
   s+=F("</table><br>");
 
+  s += F("<a href='/test'>test</a>");
+
   s += F("</body></html>");
   
   webServer->send(200, "text/html", s);
@@ -142,3 +152,9 @@ void WifiController::onWebserverCss() {
 void WifiController::onWebserverNotFound() {
   webServer->send(404, "text/plain", "404: Not found");
 }
+
+void WifiController::onWebserverTest() {
+  Serial.println("test");
+  onWebserverStatusPage();
+}
+

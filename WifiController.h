@@ -8,6 +8,7 @@
 #include "CommHandler.h"
 
 #define AP_WIFI_NAME "FAWControl"
+#define AP_CHANNEL 1
 #define AP_VISIBILITY 0   // 0 = visible, 1 = hidden
 
 #define WEBSERVER_DNS_NAME "fawcontrol"
@@ -24,11 +25,14 @@ public:
 
   void update();
 
+  bool useInitWDT();
+
   void updateDataServer();
 
   static void onWebserverCss();
   static void onWebserverStatusPage();
   static void onWebserverNotFound();
+  static void onWebserverTest();
 
   static WifiController* instance();
   
