@@ -1,6 +1,9 @@
 #include "FanController.h"
 
 #include <LogHelper.h>
+#include "TaskIDs.h"
+#include "CommController.h"
+#include "Protocol.h"
 
 FanController::FanController() : AbstractTriggerTask() {
   
@@ -42,4 +45,6 @@ void FanController::onPropertyValueChange(uint8_t id, uint8_t newValue, uint8_t 
 
   int pwmValue = 200 + map(pow(newValue, 2), 0, 81, 0, 824);
   analogWrite(PIN_MOSFET_FAN, pwmValue);
+
+  taskManager->getTask<CommController*>(COMM_CONTROLLER)->sendPackage(CMD_FAN_FB, MOD_NONE, newValue);
 }

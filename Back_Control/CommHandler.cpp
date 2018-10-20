@@ -2,79 +2,58 @@
 
 #include <LogHelper.h>
 
-#include "SmellController.h"
-#include "FanController.h"
 #include "SeatController.h"
+#include "CommController.h"
+#include "WifiController.h"
 #include "Protocol.h"
 #include "TaskIDs.h"
+#include "Debug.h"
 
 CommHandler::CommHandler() {
 }
 
 void CommHandler::handlePackage(TaskManager* taskManager, uint8_t* data) {
-  uint8_t value = data[2] - '0';
+  if (!data[0]==CMD_IDENTIFIER) return;
 
-  LOG_PRINT(F("Data: "));
-  for (uint8_t i=0;i<DATA_PACKAGE_SIZE;i++) {
-    LOG_PRINT(String((char)data[i]) + " ");
+  uint8_t value = data[3] - '0';
+
+  if ((data[1]!=CMD_PING && data[1]!=CMD_PING_FB) || PRINT_PING) {
+    LOG_PRINT(F("Received: "));
+    for (uint8_t i=1;i<DATA_PACKAGE_SIZE;i++) {
+      LOG_PRINT(String((char)data[i]) + " ");
+    }
+    LOG_PRINTLN("");
   }
-  LOG_PRINTLN("");
   
-  switch(data[0]) {
+  switch(data[1]) {
     case CMD_PING:
-      // do nothing
+      sendPackage(CMD_PING_FB, 'X', 0);
       break;
-    case CMD_VAPO: {
-      SmellController::SMELL_LOCATION location = SmellController::SMELL_LOCATION_INVALID;
-  
-      switch(data[1]) {
-        case CMD_LEFT:
-          location = SmellController::SMELL_LOCATION_LEFT;
-          break;
-        case CMD_MIDDLE:
-          location = SmellController::SMELL_LOCATION_MIDDLE;
-          break;
-        case CMD_RIGHT:
-          location = SmellController::SMELL_LOCATION_RIGHT;
-          break;
-        default:
-          // invalid
-          LOG_PRINT(F("Invalid location "));
-          LOG_PRINTLNF(data[1], HEX);
-          break;
-      }
-      
-      if (location != SmellController::SMELL_LOCATION_INVALID) {
-        taskManager->getTask<SmellController*>(SMELL_CONTROLLER)->releaseSmell(location, value);
-      }
+    case CMD_PING_FB:
+      taskManager->getTask<WifiController*>(WIFI_CONTROLLER)->dbPingbackReceived();
       break;
-    }
-    case CMD_FAN: {
-      FanController::SPEED_LOCATION location = FanController::SPEED_LOCATION_INVALID;
-  
-      switch(data[1]) {
-        case CMD_LEFT:
-          location = FanController::SPEED_LOCATION_LEFT;
-          break;
-        case CMD_RIGHT:
-          location = FanController::SPEED_LOCATION_RIGHT;
-          break;
-        default:
-          // invalid
-          LOG_PRINT(F("Invalid location "));
-          LOG_PRINTLNF(data[1], HEX);
-          break;
-      }
-      
-      if (location != FanController::SPEED_LOCATION_INVALID) {
-        taskManager->getTask<FanController*>(FAN_CONTROLLER)->setSpeedLevel(location, value);
-      }
+    case CMD_VAPO:
+      taskManager->getTask<CommController*>(COMM_CONTROLLER)->sendPackage(data);
       break;
-    }
+    case CMD_VAPO_FB:
+      taskManager->getTask<WifiController*>(WIFI_CONTROLLER)->notifyPackage(data);
+      break;
+    case CMD_FAN:
+      taskManager->getTask<CommController*>(COMM_CONTROLLER)->sendPackage(data);
+      break;
+    case CMD_FAN_FB:
+      taskManager->getTask<WifiController*>(WIFI_CONTROLLER)->notifyPackage(data);
+      break;
+    case CMD_LEVEL_FB:
+      taskManager->getTask<WifiController*>(WIFI_CONTROLLER)->notifyPackage(data);
+      break;
+    case CMD_MM_FB:
+      taskManager->getTask<WifiController*>(WIFI_CONTROLLER)->notifyPackage(data);
+      break;
     case CMD_SEAT: {
       SeatController::SEAT_DIRECTION direction = SeatController::SEAT_INVALID;
       
-      switch(data[1]) {
+      switch(data[2]) {
         case CMD_FORWARD:
           direction = SeatController::SEAT_FORWARD;
           break;
@@ -90,10 +69,8 @@ void CommHandler::handlePackage(TaskManager* taskManager, uint8_t* data) {
       break;
     }
     default:
-      LOG_PRINT(F("Unknown command "));
-      LOG_PRINTLNF(data[0], HEX);
+      //LOG_PRINT(F("Unknown command "));
+      //LOG_PRINTLNF(data[1], HEX);
       break;
-  }
-
-  
+  } 
 }

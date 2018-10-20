@@ -4,9 +4,7 @@
 #include <AbstractTriggerTask.h>
 #include <Property.h>
 #include "Pins.h"
-
-#define FAN_SPEED_MAX 9
-#define FAN_SPEED_MIN 0
+#include "GlobalConstants.h"
 
 class FanController : public AbstractTriggerTask, public Property<uint8_t>::ValueChangeListener {
 public:

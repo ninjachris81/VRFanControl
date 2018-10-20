@@ -3,6 +3,8 @@
 #include <LogHelper.h>
 #include "TaskIDs.h"
 #include "FanController.h"
+#include "CommController.h"
+#include "Protocol.h"
 
 SmellController::SmellController() : AbstractTriggerTask() {
 }
@@ -29,7 +31,7 @@ void SmellController::update() {
     case SMELL_INIT_FAN:
       smellPhase = SMELL_VAPO;
       mmStates[currentLocation].setValue(true);
-      triggerUpdateDelay(currentIntensity);
+      triggerUpdateDelay(currentIntensity * 1000);
       break;
     case SMELL_VAPO:
       LOG_PRINTLN(F("Fan delay"));
@@ -41,7 +43,6 @@ void SmellController::update() {
       LOG_PRINTLN(F("Smell finished"));
       smellPhase = SMELL_OFF;
       taskManager->getTask<FanController*>(FAN_CONTROLLER)->restoreCurrentSpeed();
-      taskManager->getTask<FanController*>(FAN_CONTROLLER)->setSpeedLevel(FAN_SPEED_MIN);
       break;
   }
 }
@@ -73,6 +74,8 @@ void SmellController::releaseSmell(SmellController::SMELL_LOCATION location, uin
 void SmellController::onPropertyValueChange(uint8_t id, bool newValue, bool oldValue) {
   int v = newValue ? LOW : HIGH;
   
+  taskManager->getTask<CommController*>(COMM_CONTROLLER)->sendPackage(CMD_MM_FB, INDEX_TO_LOCATION_MOD(id), newValue);
+
   switch(id) {
     case SMELL_LOCATION_LEFT:
       digitalWrite(PIN_MM_RELAY1, v);

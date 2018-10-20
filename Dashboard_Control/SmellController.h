@@ -4,8 +4,7 @@
 #include <AbstractTriggerTask.h>
 #include <Property.h>
 #include "Pins.h"
-
-#define MM_COUNT 3
+#include "GlobalConstants.h"
 
 #define EMIT_SPEED_LEVEL 5
 

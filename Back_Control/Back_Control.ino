@@ -1,47 +1,24 @@
 #include <LogHelper.h>
 #include <TaskManager.h>
 
-// either wifi or serial
-#define USE_WIFI
-
-#include "FanController.h"
-#include "SmellController.h"
-#include "ServoController.h"
 #include "SeatController.h"
-
-#ifdef USE_WIFI
-  #include "WifiController.h"
-#else
-  #include "CommController.h"
-#endif
+#include "WifiController.h"
+#include "CommController.h"
 
 TaskManager taskManager;
 
-FanController fanController;
-SmellController smellController;
-ServoController servoController;
 SeatController seatController;
-
-#ifdef USE_WIFI
-  WifiController wifiController;
-#else
-  CommController commController;
-#endif
+WifiController wifiController;
+CommController commController;
 
 void setup() {
   LOG_INIT();
   //LOG_WAIT();
 
-  taskManager.registerTask(&fanController);
-  taskManager.registerTask(&smellController);
-  taskManager.registerTask(&servoController);
-  taskManager.registerTask(&seatController);
-  
-#ifdef USE_WIFI
+  taskManager.registerTask(&seatController);  
   taskManager.registerTask(&wifiController);
-#else
   taskManager.registerTask(&commController);
-#endif
+  
   taskManager.init();
 
   LOG_PRINTLN(F("Init complete"));

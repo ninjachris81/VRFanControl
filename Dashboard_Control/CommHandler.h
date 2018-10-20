@@ -14,6 +14,8 @@ public:
   CommHandler();
 
   void handlePackage(TaskManager* taskManager, uint8_t* data);
+
+  virtual void sendPackage(char cmd, char mod, uint8_t value) = 0;
 };
 
 #endif    //COMMHANDLER_H

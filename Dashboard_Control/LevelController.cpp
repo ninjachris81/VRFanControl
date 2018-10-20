@@ -29,10 +29,9 @@ void LevelController::update() {
 
 uint8_t LevelController::analogToLevel(uint16_t analogValue) {
   analogValue = min(max(analogValue, LEVEL_MIN), LEVEL_MAX);
-  LOG_PRINTLN(analogValue);
   return map(analogValue, LEVEL_MIN, LEVEL_MAX, 9, 0);
 }
 
 void LevelController::onPropertyValueChange(uint8_t id, uint8_t newValue, uint8_t oldValue) {
-  taskManager->getTask<CommController*>(COMM_CONTROLLER)->sendPackage(CMD_LEVEL, id + '0', newValue);
+  taskManager->getTask<CommController*>(COMM_CONTROLLER)->sendPackage(CMD_LEVEL_FB, id + '0', newValue);
 }

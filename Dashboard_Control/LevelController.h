@@ -5,8 +5,7 @@
 #include <Property.h>
 
 #include "Pins.h"
-
-#define LEVEL_COUNT 3
+#include "GlobalConstants.h"
 
 #define LEVEL_MIN 350
 #define LEVEL_MAX 700

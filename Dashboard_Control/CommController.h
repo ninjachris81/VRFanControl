@@ -2,7 +2,9 @@
 #define COMMCONTROLLER_H
 
 #include <AbstractTask.h>
+#include <SoftwareSerial.h>
 #include "CommHandler.h"
+#include "Pins.h"
 
 class CommController : public AbstractTask, public CommHandler {
 public:
@@ -13,7 +15,8 @@ public:
   void update();
 
   void sendPackage(char cmd, char mod, uint8_t value);
-  
+private:
+  SoftwareSerial* ss;
 };
 
 
