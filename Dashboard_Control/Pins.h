@@ -10,3 +10,7 @@
 
 #define PIN_COMM_RX A4
 #define PIN_COMM_TX A5
+
+#define PIN_LED_DASHBOARD 5
+#define PIN_LED_FINS 6
+#define PIN_LED_CABLE_HOLDER 9

@@ -5,6 +5,7 @@
 #include "SmellController.h"
 #include "FanController.h"
 #include "CommController.h"
+#include "LedController.h"
 
 #include "Protocol.h"
 #include "TaskIDs.h"
@@ -62,6 +63,31 @@ void CommHandler::handlePackage(TaskManager* taskManager, uint8_t* data) {
     case CMD_FAN:
       taskManager->getTask<FanController*>(FAN_CONTROLLER)->setSpeedLevel(value);
       break;
+    case CMD_LED_COLOR: {
+      LedController::LED_LOCATION location = LedController::LED_LOCATION_INVALID;
+  
+      switch(data[2]) {
+        case MOD_LED_DASHBOARD:
+          location = LedController::LED_LOCATION_DASHBOARD;
+          break;
+        case MOD_LED_FINS:
+          location = LedController::LED_LOCATION_FINS;
+          break;
+        case MOD_LED_CABLE_HOLDER:
+          location = LedController::LED_LOCATION_CABLE_HOLDER;
+          break;
+        default:
+          // invalid
+          LOG_PRINT(F("Invalid location "));
+          LOG_PRINTLNF(data[2], HEX);
+          break;
+      }
+      
+      if (location != LedController::LED_LOCATION_INVALID) {
+        taskManager->getTask<LedController*>(LED_CONTROLLER)->setColor(location, value);
+      }
+      break;
+    }
     default:
       LOG_PRINT(F("Unknown command "));
       LOG_PRINTLNF(data[1], HEX);

@@ -5,6 +5,7 @@
 #include "SmellController.h"
 #include "CommController.h"
 #include "LevelController.h"
+#include "LedController.h"
 
 TaskManager taskManager;
 
@@ -12,6 +13,7 @@ FanController fanController;
 SmellController smellController;
 CommController commController;
 LevelController levelController;
+LedController ledController;
 
 void setup() {
   LOG_INIT();
@@ -21,6 +23,7 @@ void setup() {
   taskManager.registerTask(&smellController);
   taskManager.registerTask(&commController);
   taskManager.registerTask(&levelController);
+  taskManager.registerTask(&ledController);
   
   taskManager.init();
 
