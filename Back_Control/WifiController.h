@@ -33,8 +33,10 @@ public:
   bool useInitWDT();
 
   void sendPackage(uint8_t *data);
+  void sendPackage(uint8_t *data, bool notify);
 
   void sendPackage(char cmd, char mod, uint8_t value);
+  void sendPackage(char cmd, char mod, uint8_t value, bool notify);
   
   void updateDataServer();
 

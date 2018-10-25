@@ -1,14 +1,17 @@
 #ifndef LEDCONTROLLER_H
 #define LEDCONTROLLER_H
 
-#include <AbstractTriggerTask.h>
+#include <AbstractIdleTask.h>
 #include <FastLED.h>
 #include <Property.h>
 
 #include "Pins.h"
 #include "GlobalConstants.h"
 
-class LedController : public AbstractTriggerTask, public Property<uint8_t>::ValueChangeListener {
+#define LED_COLOR_MODE GRB
+#define LED_CORRECTION TypicalSMD5050
+
+class LedController : public AbstractIdleTask, public Property<uint8_t>::ValueChangeListener {
 public:
   LedController();
 

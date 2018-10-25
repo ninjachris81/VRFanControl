@@ -51,20 +51,21 @@ void CommHandler::handlePackage(TaskManager* taskManager, uint8_t* data) {
       taskManager->getTask<WifiController*>(WIFI_CONTROLLER)->notifyPackage(data);
       break;
     case CMD_SEAT: {
-      SeatController::SEAT_DIRECTION direction = SeatController::SEAT_INVALID;
+      SeatController::SEAT_DIRECTION direction = SeatController::SEAT_STOP;
       
       switch(data[2]) {
-        case CMD_FORWARD:
+        case MOD_STOP:
+          direction = SeatController::SEAT_STOP;
+          break;
+        case MOD_FORWARD:
           direction = SeatController::SEAT_FORWARD;
           break;
-        case CMD_BACKWARD:
+        case MOD_BACKWARD:
           direction = SeatController::SEAT_BACKWARD;
           break;
       }
 
-      if (direction!=SeatController::SEAT_INVALID) {
-        taskManager->getTask<SeatController*>(SEAT_CONTROLLER)->moveSeat(direction);
-      }
+      taskManager->getTask<SeatController*>(SEAT_CONTROLLER)->moveSeat(direction);
 
       break;
     }

@@ -114,7 +114,15 @@ void WifiController::onWebSocketEvent(uint8_t num, WStype_t type, uint8_t * payl
             if (payload[0]==CMD_IDENTIFIER) {
               LOG_PRINTLN(F("WS package"));
               payload[3] = payload[3] - '0';
-              instance()->getTaskManager()->getTask<CommController*>(COMM_CONTROLLER)->sendPackage(payload);
+
+              switch(payload[1]) {
+                case CMD_SEAT:
+                  instance()->handlePackage(instance()->getTaskManager(), payload);
+                  break;
+                default:
+                  instance()->getTaskManager()->getTask<CommController*>(COMM_CONTROLLER)->sendPackage(payload);
+                  break;
+              }
             } 
           }
           break;
@@ -188,10 +196,10 @@ void WifiController::onWebserverStatusPage() {
   }
 #endif
   
-  s+=F("<table><th>Item</th><th>Value</th>");
+  s+=F("<table align=center><th>Item</th><th>Value</th>");
 
   // TODO: clients connected
-  s+=F("<tr><td>Data client connected</td><td id='f0'></td></tr>");
+  s+=F("<tr><td width=50%>Data client connected</td><td id='f0'></td></tr>");
 
   // ap clients
   s+=F("<tr><td>AP Clients</td><td id='f1'></td></tr>");
@@ -218,28 +226,61 @@ void WifiController::onWebserverStatusPage() {
   s+=F("<tr><td>Fan State</td><td><div contenteditable=true id='eid_Fx'></div><input type=button onclick=\"sendData(this,'f');\" value='SET'></td></tr>");
 
   // Levels
-  s+=F("<tr><td><table width=100%><th colspan=2>Levels</th>");
+  s+=F("<tr><td colspan=2><table width=100%><th colspan=2>Levels</th>");
   for (uint8_t i=0;i<LEVEL_COUNT;i++) {
-    s+=F("<tr><td>Level ");
+    s+=F("<tr><td width=50%>Level ");
     s+=i;
-    s+=F("</td><td><div id='eid_L");
+    s+=F("</td><td><span id='eid_L");
     s+=i;
-    s+=F("'>&nbsp;</div></td></tr>");
+    s+=F("'></span></td></tr>");
   }
   s+=F("</table></td></tr>");
 
   // smells
-  s+=F("<tr><td><table width=100%><th colspan=3>Mist Makers</th>");
+  s+=F("<tr><td colspan=2><table width=100%><th colspan=3>Mist Makers</th>");
   for (uint8_t i=0;i<MM_COUNT;i++) {
     s+=F("<tr><td>Smell ");
     s+=i;
-    s+=F("</td><td><div id='eid_M");
+    s+=F("</td><td width=20%><span id='eid_M");
     s+=INDEX_TO_LOCATION_MOD(i);
-    s+=F("'>&nbsp;</div></td><td><input type=button onclick=\"sendCmd('v','");
+    s+=F("'></span></td><td><input type=button onclick=\"sendCmd('v','");
     s+=INDEX_TO_LOCATION_MOD(i);
     s+=F("',5);\" value='EMIT'></td></tr>");
   }
   s+=F("</table></td></tr>");
+
+  // seat
+  s+=F("<tr><td colspan=2>");
+  s+=F("<table width=100%><th colspan=2>Seat</th>");
+  s+=F("<tr><td>Position</td><td><span id='eid_Sx'></span></td></tr>");
+  s+=F("<tr><td>Movement</td><td><span id='eid_Ox'></span></td></tr>");
+  s+=F("<tr><td>Forward Switch</td><td><span id='eid_Wf'></span></td></tr>");
+  s+=F("<tr><td>Backward Switch</td><td><span id='eid_Wb'></span></td></tr>");
+  s+=F("<tr><td><input type=button value='Move Forward' onclick=\"sendCmd('s','f',0)\"></td><td><input type=button value='Move Backward' onclick=\"sendCmd('s','b',0)\"></td></tr>");
+  s+=F("</td></tr>");
+  
+  // colors
+  s+=F("<tr><td colspan=2><table width=100%><th colspan=3>LED Colors</th>");
+  for (uint8_t i=0;i<LED_STRIP_COUNT;i++) {
+    s+=F("<tr><td>LED Color ");
+    s+=i;
+    s+=F("</td><td><div id='eid_E");
+    s+=INDEX_TO_LED_MOD(i);
+    s+=F("'>&nbsp;</div></td><td><input type=button onclick=\"sendData(this, 'e');\" value='SET'></td></tr>");
+  }
+  s+=F("</table></td></tr>");
+
+  // brightnesses
+  s+=F("<tr><td colspan=2><table width=100%><th colspan=3>LED Brightnesses</th>");
+  for (uint8_t i=0;i<LED_STRIP_COUNT;i++) {
+    s+=F("<tr><td>LED Brightness ");
+    s+=i;
+    s+=F("</td><td><div id='eid_B");
+    s+=INDEX_TO_LED_MOD(i);
+    s+=F("'>&nbsp;</div></td><td><input type=button onclick=\"sendData(this, 'b');\" value='SET'></td></tr>");
+  }
+  s+=F("</table></td></tr>");
+
   
   // finish main table
   s+=F("</table>");
@@ -265,14 +306,26 @@ void WifiController::onWebserverNotFound() {
 }
 
 void WifiController::sendPackage(uint8_t *data) {
+  sendPackage(data, false);
+}
+
+void WifiController::sendPackage(uint8_t *data, bool notify) {
   if (activeClient) {
     if (activeClient.connected()) {
       activeClient.println((char *)data);
     }
   }
+
+  if (notify) {
+    notifyPackage(data);
+  }
 }
 
 void WifiController::sendPackage(char cmd, char mod, uint8_t value) {
+  sendPackage(cmd, mod, value, false);
+}
+
+void WifiController::sendPackage(char cmd, char mod, uint8_t value, bool notify) {
   uint8_t package[DATA_PACKAGE_SIZE];
 
   package[0] = CMD_IDENTIFIER;
@@ -280,5 +333,5 @@ void WifiController::sendPackage(char cmd, char mod, uint8_t value) {
   package[2] = mod;
   package[3] = value + '0';
 
-  sendPackage(package);
+  sendPackage(package, notify);
 }

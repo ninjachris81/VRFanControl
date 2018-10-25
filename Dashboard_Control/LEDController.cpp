@@ -7,7 +7,7 @@
 #include "Protocol.h"
 #include "GlobalConstants.h"
 
-LedController::LedController() : AbstractTriggerTask() {
+LedController::LedController() : AbstractIdleTask() {
   
 }
 
@@ -22,9 +22,9 @@ void LedController::init() {
     leds[i] = new CRGB[ledCounts[i]];
   }
 
-  controllers[LED_LOCATION_DASHBOARD] = &FastLED.addLeds<NEOPIXEL, PIN_LED_DASHBOARD>(leds[LED_LOCATION_DASHBOARD], LED_COUNT_DASHBOARD);
-  controllers[LED_LOCATION_FINS] = &FastLED.addLeds<NEOPIXEL, PIN_LED_FINS>(leds[LED_LOCATION_FINS], LED_COUNT_FINS);
-  controllers[LED_LOCATION_CABLE_HOLDER] = &FastLED.addLeds<NEOPIXEL, PIN_LED_CABLE_HOLDER>(leds[LED_LOCATION_CABLE_HOLDER], LED_COUNT_CABLE_HOLDER);
+  controllers[LED_LOCATION_DASHBOARD] = &FastLED.addLeds<WS2812B, PIN_LED_DASHBOARD, LED_COLOR_MODE>(leds[LED_LOCATION_DASHBOARD], LED_COUNT_DASHBOARD).setCorrection( LED_CORRECTION );
+  controllers[LED_LOCATION_FINS] = &FastLED.addLeds<WS2812B, PIN_LED_FINS, LED_COLOR_MODE>(leds[LED_LOCATION_FINS], LED_COUNT_FINS).setCorrection( LED_CORRECTION );
+  controllers[LED_LOCATION_CABLE_HOLDER] = &FastLED.addLeds<WS2812B, PIN_LED_CABLE_HOLDER, LED_COLOR_MODE>(leds[LED_LOCATION_CABLE_HOLDER], LED_COUNT_CABLE_HOLDER).setCorrection( LED_CORRECTION );
 
   for (uint8_t i=0;i<LED_STRIP_COUNT;i++) {
     brightnesses[i] = LED_DEFAULT_BRIGHTNESS;
