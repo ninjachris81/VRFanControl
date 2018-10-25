@@ -69,6 +69,8 @@ private:
   static WiFiClient activeClient;
 
   static void refreshData();
+
+  static bool checkUTF8(uint8_t *string, int length);
   
 };
 

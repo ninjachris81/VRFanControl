@@ -21,6 +21,10 @@ void FanController::init() {
 void FanController::update() {
 }
 
+void FanController::onInitialBroadcast() {
+  taskManager->getTask<CommController*>(COMM_CONTROLLER)->sendPackage(CMD_FAN_FB, MOD_NONE, fanSpeed.getValue());
+}
+
 void FanController::saveCurrentSpeed() {
   savedFanSpeed = fanSpeed.getValue();
 }

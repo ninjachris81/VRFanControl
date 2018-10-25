@@ -10,6 +10,7 @@
 #include "Protocol.h"
 #include "TaskIDs.h"
 #include "Debug.h"
+#include "InitialBroadcastSupport.h"
 
 CommHandler::CommHandler() {
 }
@@ -34,6 +35,22 @@ void CommHandler::handlePackage(TaskManager* taskManager, uint8_t* data) {
   switch(data[1]) {
     case CMD_PING:
       sendPackage(CMD_PING_FB, MOD_NONE, 0);
+
+      if (isFirstPing) {
+        isFirstPing = false;
+        LOG_PRINTLN(F("BC First Ping"));
+
+        for (uint8_t i=0;i<IBS_OBJECT_COUNT;i++) {
+          InitialBroadcastSupport* obj = InitialBroadcastSupport::getObject(i);
+          if (obj!=NULL) {
+            obj->onInitialBroadcast();
+          } else {
+            LOG_PRINT(F("Break ibs at "));
+            LOG_PRINTLN(i);
+            break;
+          }
+        }
+      }
       break;
     case CMD_VAPO: {
       SmellController::SMELL_LOCATION location = SmellController::SMELL_LOCATION_INVALID;

@@ -5,10 +5,11 @@
 #include <Property.h>
 #include "Pins.h"
 #include "GlobalConstants.h"
+#include "InitialBroadcastSupport.h"
 
 #define EMIT_SPEED_LEVEL 5
 
-class SmellController : public AbstractTriggerTask, public Property<bool>::ValueChangeListener  {
+class SmellController : public AbstractTriggerTask, public Property<bool>::ValueChangeListener, public InitialBroadcastSupport  {
 public:
   SmellController();
 
@@ -29,6 +30,8 @@ public:
   void init();
 
   void update();
+
+  void onInitialBroadcast();
 
   void onPropertyValueChange(uint8_t id, bool newValue, bool oldValue);
 

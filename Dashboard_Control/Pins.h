@@ -30,7 +30,7 @@
   #define PIN_MM_LEVEL3 A2
   
   #define PIN_COMM_RX 22
-  #define PIN_COMM_TX 23
+  #define PIN_COMM_TX 24
   
   #define PIN_LED_DASHBOARD 3
   #define PIN_LED_FINS 4

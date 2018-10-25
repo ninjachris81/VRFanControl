@@ -2,7 +2,10 @@
 #define COMMCONTROLLER_H
 
 #include <AbstractTask.h>
-#include <SoftwareSerial.h>
+#ifdef ARDUINO_AVR_MEGA2560
+#else
+  #include <SoftwareSerial.h>
+#endif
 #include "CommHandler.h"
 #include "Pins.h"
 
@@ -16,7 +19,14 @@ public:
 
   void sendPackage(char cmd, char mod, uint8_t value);
 private:
+#ifdef ARDUINO_AVR_MEGA2560
+#else
   SoftwareSerial* ss;
+#endif
+
+  int serialAvailable();
+  char serialPeek();
+  int serialRead();
 };
 
 

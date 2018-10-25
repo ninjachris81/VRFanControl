@@ -7,6 +7,8 @@
 #include "LevelController.h"
 #include "LedController.h"
 
+#include "InitialBroadcastSupport.h"
+
 TaskManager taskManager;
 
 FanController fanController;
@@ -26,6 +28,12 @@ void setup() {
   taskManager.registerTask(&ledController);
   
   taskManager.init();
+
+  InitialBroadcastSupport::init();
+  InitialBroadcastSupport::registerObject(&fanController);
+  InitialBroadcastSupport::registerObject(&smellController);
+  InitialBroadcastSupport::registerObject(&levelController);
+  InitialBroadcastSupport::registerObject(&ledController);
 
   LOG_PRINTLN(F("Init complete"));
 }

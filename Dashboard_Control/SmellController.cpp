@@ -47,6 +47,12 @@ void SmellController::update() {
   }
 }
 
+void SmellController::onInitialBroadcast() {
+  for (uint8_t i=0;i<MM_COUNT;i++) {
+    taskManager->getTask<CommController*>(COMM_CONTROLLER)->sendPackage(CMD_MM_FB, INDEX_TO_LOCATION_MOD(i), mmStates[i].getValue());
+  }
+}
+
 void SmellController::releaseSmell(SmellController::SMELL_LOCATION location, uint8_t intensity) {
   if (intensity>10) return;
   if (smellPhase!=SMELL_OFF) {

@@ -5,14 +5,17 @@
 #include <Property.h>
 #include "Pins.h"
 #include "GlobalConstants.h"
+#include "InitialBroadcastSupport.h"
 
-class FanController : public AbstractTriggerTask, public Property<uint8_t>::ValueChangeListener {
+class FanController : public AbstractTriggerTask, public Property<uint8_t>::ValueChangeListener, public InitialBroadcastSupport {
 public:
   FanController();
 
   void init();
 
   void update();
+
+  void onInitialBroadcast();
 
   void setSpeedLevel(uint8_t speedLevel);
 

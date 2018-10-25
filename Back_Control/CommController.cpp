@@ -3,6 +3,7 @@
 #include <LogHelper.h>
 #include "Protocol.h"
 #include "Debug.h"
+#include "GlobalConstants.h"
 
 CommController::CommController() : AbstractTask() {
   
@@ -10,7 +11,7 @@ CommController::CommController() : AbstractTask() {
 
 void CommController::init() {
   ss = new SoftwareSerial(PIN_COMM_RX, PIN_COMM_TX, false);
-  ss->begin(9600);
+  ss->begin(SERIAL_SPEED);
 }
 
 void CommController::update() {

@@ -36,6 +36,12 @@ void LedController::init() {
 void LedController::update() {
 }
 
+void LedController::onInitialBroadcast() {
+  for (uint8_t i=0;i<LED_STRIP_COUNT;i++) {
+    taskManager->getTask<CommController*>(COMM_CONTROLLER)->sendPackage(CMD_LED_COLOR_FB, i + '0', currentColors[i].getValue());
+  }
+}
+
 void LedController::setColor(LED_LOCATION location, uint8_t colorIndex) {
   colorIndex = constrain(colorIndex, 0, COLOR_COUNT-1);
   location = constrain(location, 0, LED_STRIP_COUNT-1);

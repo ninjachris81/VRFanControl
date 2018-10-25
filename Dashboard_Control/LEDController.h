@@ -7,11 +7,12 @@
 
 #include "Pins.h"
 #include "GlobalConstants.h"
+#include "InitialBroadcastSupport.h"
 
 #define LED_COLOR_MODE GRB
 #define LED_CORRECTION TypicalSMD5050
 
-class LedController : public AbstractIdleTask, public Property<uint8_t>::ValueChangeListener {
+class LedController : public AbstractIdleTask, public Property<uint8_t>::ValueChangeListener, public InitialBroadcastSupport {
 public:
   LedController();
 
@@ -25,6 +26,8 @@ public:
   void init();
 
   void update();
+
+  void onInitialBroadcast();
 
   void setColor(LED_LOCATION location, uint8_t colorIndex);
 

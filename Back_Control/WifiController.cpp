@@ -176,7 +176,11 @@ void WifiController::refreshData() {
 
 void WifiController::notifyPackage(uint8_t *data) {
   LOG_PRINTLN(F("Notify package"));
-  wsServer->broadcastTXT(data, DATA_PACKAGE_SIZE);
+  if (checkUTF8(data, DATA_PACKAGE_SIZE)) {
+    wsServer->broadcastTXT(data, DATA_PACKAGE_SIZE);
+  } else {
+    LOG_PRINTLN(F("Invalid UTF-8"));
+  }
 }
 
 void WifiController::dbPingbackReceived() {
@@ -264,20 +268,20 @@ void WifiController::onWebserverStatusPage() {
   for (uint8_t i=0;i<LED_STRIP_COUNT;i++) {
     s+=F("<tr><td>LED Color ");
     s+=i;
-    s+=F("</td><td><div id='eid_E");
+    s+=F("</td><td><div contenteditable=true id='eid_E");
     s+=INDEX_TO_LED_MOD(i);
-    s+=F("'>&nbsp;</div></td><td><input type=button onclick=\"sendData(this, 'e');\" value='SET'></td></tr>");
+    s+=F("'>&nbsp;</div><input type=button onclick=\"sendData(this, 'e');\" value='SET'></td></tr>");
   }
   s+=F("</table></td></tr>");
 
   // brightnesses
-  s+=F("<tr><td colspan=2><table width=100%><th colspan=3>LED Brightnesses</th>");
+  s+=F("<tr><td colspan=2><table width=100%><th colspan=2>LED Brightnesses</th>");
   for (uint8_t i=0;i<LED_STRIP_COUNT;i++) {
     s+=F("<tr><td>LED Brightness ");
     s+=i;
-    s+=F("</td><td><div id='eid_B");
+    s+=F("</td><td><div contenteditable=true id='eid_B");
     s+=INDEX_TO_LED_MOD(i);
-    s+=F("'>&nbsp;</div></td><td><input type=button onclick=\"sendData(this, 'b');\" value='SET'></td></tr>");
+    s+=F("'>&nbsp;</div><input type=button onclick=\"sendData(this, 'b');\" value='SET'></td></tr>");
   }
   s+=F("</table></td></tr>");
 
@@ -334,4 +338,27 @@ void WifiController::sendPackage(char cmd, char mod, uint8_t value, bool notify)
   package[3] = value + '0';
 
   sendPackage(package, notify);
+}
+
+bool WifiController::checkUTF8(uint8_t *string, int length)
+{
+    int c,i,ix,n,j;
+    for (i=0, ix=length; i < ix; i++)
+    {
+        c = (unsigned char) string[i];
+        //if (c==0x09 || c==0x0a || c==0x0d || (0x20 <= c && c <= 0x7e) ) n = 0; // is_printable_ascii
+        if (0x00 <= c && c <= 0x7f) n=0; // 0bbbbbbb
+        else if ((c & 0xE0) == 0xC0) n=1; // 110bbbbb
+        else if ( c==0xed && i<(ix-1) && ((unsigned char)string[i+1] & 0xa0)==0xa0) return false; //U+d800 to U+dfff
+        else if ((c & 0xF0) == 0xE0) n=2; // 1110bbbb
+        else if ((c & 0xF8) == 0xF0) n=3; // 11110bbb
+        //else if (($c & 0xFC) == 0xF8) n=4; // 111110bb //byte 5, unnecessary in 4 byte UTF-8
+        //else if (($c & 0xFE) == 0xFC) n=5; // 1111110b //byte 6, unnecessary in 4 byte UTF-8
+        else return false;
+        for (j=0; j<n && i<ix; j++) { // n bytes matching 10bbbbbb follow ?
+            if ((++i == ix) || (( (unsigned char)string[i] & 0xC0) != 0x80))
+                return false;
+        }
+    }
+    return true;
 }
