@@ -316,7 +316,11 @@ void WifiController::sendPackage(uint8_t *data) {
 void WifiController::sendPackage(uint8_t *data, bool notify) {
   if (activeClient) {
     if (activeClient.connected()) {
-      activeClient.println((char *)data);
+      for (uint8_t i=0;i<DATA_PACKAGE_SIZE;i++) {
+        activeClient.write(data[i]);
+      }
+      activeClient.println("");
+      activeClient.flush();
     }
   }
 

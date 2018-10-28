@@ -21,9 +21,9 @@
 
   #define PIN_MOSFET_FAN 2
   
-  #define PIN_MM_RELAY1 30
-  #define PIN_MM_RELAY2 31
-  #define PIN_MM_RELAY3 32
+  #define PIN_MM_RELAY1 26
+  #define PIN_MM_RELAY2 28
+  #define PIN_MM_RELAY3 30
   
   #define PIN_MM_LEVEL1 A0
   #define PIN_MM_LEVEL2 A1
@@ -35,6 +35,9 @@
   #define PIN_LED_DASHBOARD 3
   #define PIN_LED_FINS 4
   #define PIN_LED_CABLE_HOLDER 5
+  #define PIN_LED_HEADLIGHTS 6
+  #define PIN_LED_HEADLIGHTS_AMB 7
+  #define PIN_LED_MIDDLE_STRIP 44
 
 #else 
   #error Unsupported board

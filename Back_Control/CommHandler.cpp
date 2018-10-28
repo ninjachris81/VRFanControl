@@ -33,13 +33,13 @@ void CommHandler::handlePackage(TaskManager* taskManager, uint8_t* data) {
       taskManager->getTask<WifiController*>(WIFI_CONTROLLER)->dbPingbackReceived();
       break;
     case CMD_VAPO:
-      taskManager->getTask<CommController*>(COMM_CONTROLLER)->sendPackage(data);
+      taskManager->getTask<CommController*>(COMM_CONTROLLER)->sendPackage(data[1], data[2], value);
       break;
     case CMD_VAPO_FB:
       taskManager->getTask<WifiController*>(WIFI_CONTROLLER)->notifyPackage(data);
       break;
     case CMD_FAN:
-      taskManager->getTask<CommController*>(COMM_CONTROLLER)->sendPackage(data);
+      taskManager->getTask<CommController*>(COMM_CONTROLLER)->sendPackage(data[1], data[2], value);
       break;
     case CMD_FAN_FB:
       taskManager->getTask<WifiController*>(WIFI_CONTROLLER)->notifyPackage(data);

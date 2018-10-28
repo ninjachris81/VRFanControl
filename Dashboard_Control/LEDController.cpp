@@ -12,22 +12,28 @@ LedController::LedController() : AbstractIdleTask() {
 }
 
 void LedController::init() {
-  colors[0] = LED_COLOR_0;
-
-  ledCounts[LED_LOCATION_DASHBOARD] = LED_COUNT_DASHBOARD;
-  ledCounts[LED_LOCATION_FINS] = LED_COUNT_FINS;
-  ledCounts[LED_LOCATION_CABLE_HOLDER] = LED_COUNT_CABLE_HOLDER;
-
   for (uint8_t i=0;i<LED_STRIP_COUNT;i++) {
-    leds[i] = new CRGB[ledCounts[i]];
-  }
-
-  controllers[LED_LOCATION_DASHBOARD] = &FastLED.addLeds<WS2812B, PIN_LED_DASHBOARD, LED_COLOR_MODE>(leds[LED_LOCATION_DASHBOARD], LED_COUNT_DASHBOARD).setCorrection( LED_CORRECTION );
-  controllers[LED_LOCATION_FINS] = &FastLED.addLeds<WS2812B, PIN_LED_FINS, LED_COLOR_MODE>(leds[LED_LOCATION_FINS], LED_COUNT_FINS).setCorrection( LED_CORRECTION );
-  controllers[LED_LOCATION_CABLE_HOLDER] = &FastLED.addLeds<WS2812B, PIN_LED_CABLE_HOLDER, LED_COLOR_MODE>(leds[LED_LOCATION_CABLE_HOLDER], LED_COUNT_CABLE_HOLDER).setCorrection( LED_CORRECTION );
-
-  for (uint8_t i=0;i<LED_STRIP_COUNT;i++) {
-    brightnesses[i] = LED_DEFAULT_BRIGHTNESS;
+    switch(i) {
+      case LED_LOCATION_DASHBOARD:
+        controllers[i] = &FastLED.addLeds<WS2812B, PIN_LED_DASHBOARD, LED_COLOR_MODE>(leds[i], ledCounts[i]).setCorrection( LED_CORRECTION );
+        break;
+      case LED_LOCATION_FINS:
+        controllers[i] = &FastLED.addLeds<WS2812B, PIN_LED_FINS, LED_COLOR_MODE>(leds[i], ledCounts[i]).setCorrection( LED_CORRECTION );
+        break;
+      case LED_LOCATION_CABLE_HOLDER:
+        controllers[i] = &FastLED.addLeds<WS2812B, PIN_LED_CABLE_HOLDER, LED_COLOR_MODE>(leds[i], ledCounts[i]).setCorrection( LED_CORRECTION );
+        break;
+      case LED_LOCATION_HEADLIGHTS:
+        controllers[i] = &FastLED.addLeds<WS2812B, PIN_LED_HEADLIGHTS, LED_COLOR_MODE>(leds[i], ledCounts[i]).setCorrection( LED_CORRECTION );
+        break;
+      case LED_LOCATION_HEADLIGHTS_AMB:
+        controllers[i] = &FastLED.addLeds<WS2812B, PIN_LED_HEADLIGHTS_AMB, LED_COLOR_MODE>(leds[i], ledCounts[i]).setCorrection( LED_CORRECTION );
+        break;
+      case LED_LOCATION_MIDDLE_STRIP:
+        controllers[i] = &FastLED.addLeds<WS2812B, PIN_LED_MIDDLE_STRIP, LED_COLOR_MODE>(leds[i], ledCounts[i]).setCorrection( LED_CORRECTION );
+        break;
+    }
+    
     currentColors[i].init(i, 0);
     currentColors[i].registerValueChangeListener(this);
   }
