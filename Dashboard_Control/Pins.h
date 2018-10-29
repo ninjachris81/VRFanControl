@@ -16,6 +16,9 @@
   #define PIN_LED_DASHBOARD 5
   #define PIN_LED_FINS 6
   #define PIN_LED_CABLE_HOLDER 9
+  #define PIN_LED_HEADLIGHTS 9    // TBD
+  #define PIN_LED_HEADLIGHTS_AMB 9  // TBD
+  #define PIN_LED_MIDDLE_STRIP 9 // TBD
   
 #elif ARDUINO_AVR_MEGA2560
 

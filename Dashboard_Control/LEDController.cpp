@@ -66,3 +66,27 @@ void LedController::onPropertyValueChange(uint8_t id, uint8_t newValue, uint8_t 
 
   taskManager->getTask<CommController*>(COMM_CONTROLLER)->sendPackage(CMD_LED_COLOR_FB, id + '0', newValue);
 }
+
+void LedController::setBrightness(LedController::LED_LOCATION location, uint8_t value) {
+  brightnesses[location] = map(value, 0, 9, 0, 255);
+  controllers[location]->showLeds(brightnesses[location]);
+}
+
+LedController::LED_LOCATION LedController::resolveLocation(uint8_t c) {
+  switch(c) {
+    case MOD_LED_DASHBOARD:
+      return LED_LOCATION_DASHBOARD;
+    case MOD_LED_FINS:
+      return LED_LOCATION_FINS;
+    case MOD_LED_CABLE_HOLDER:
+      return LED_LOCATION_CABLE_HOLDER;
+    case MOD_LED_HEADLIGHTS:
+      return LED_LOCATION_HEADLIGHTS;
+    case MOD_LED_HEADLIGHTS_AMB:
+      return LED_LOCATION_HEADLIGHTS_AMB;
+    case MOD_LED_MIDDLE_STRIP:
+      return LED_LOCATION_MIDDLE_STRIP;
+  }
+
+  return LED_LOCATION_INVALID;
+}

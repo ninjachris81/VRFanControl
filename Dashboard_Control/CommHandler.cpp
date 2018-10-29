@@ -53,27 +53,13 @@ void CommHandler::handlePackage(TaskManager* taskManager, uint8_t* data) {
       }
       break;
     case CMD_VAPO: {
-      SmellController::SMELL_LOCATION location = SmellController::SMELL_LOCATION_INVALID;
+      SmellController::SMELL_LOCATION location = taskManager->getTask<SmellController*>(SMELL_CONTROLLER)->resolveLocation(data[2]);
   
-      switch(data[2]) {
-        case MOD_LEFT:
-          location = SmellController::SMELL_LOCATION_LEFT;
-          break;
-        case MOD_MIDDLE:
-          location = SmellController::SMELL_LOCATION_MIDDLE;
-          break;
-        case MOD_RIGHT:
-          location = SmellController::SMELL_LOCATION_RIGHT;
-          break;
-        default:
-          // invalid
-          LOG_PRINT(F("Invalid location "));
-          LOG_PRINTLNF(data[2], HEX);
-          break;
-      }
-      
       if (location != SmellController::SMELL_LOCATION_INVALID) {
         taskManager->getTask<SmellController*>(SMELL_CONTROLLER)->releaseSmell(location, value);
+      } else {
+        LOG_PRINT(F("Invalid location "));
+        LOG_PRINTLNF(data[2], HEX);
       }
       break;
     }
@@ -81,27 +67,26 @@ void CommHandler::handlePackage(TaskManager* taskManager, uint8_t* data) {
       taskManager->getTask<FanController*>(FAN_CONTROLLER)->setSpeedLevel(value);
       break;
     case CMD_LED_COLOR: {
-      LedController::LED_LOCATION location = LedController::LED_LOCATION_INVALID;
+      LedController::LED_LOCATION location = taskManager->getTask<LedController*>(LED_CONTROLLER)->resolveLocation(data[2]);
   
-      switch(data[2]) {
-        case MOD_LED_DASHBOARD:
-          location = LedController::LED_LOCATION_DASHBOARD;
-          break;
-        case MOD_LED_FINS:
-          location = LedController::LED_LOCATION_FINS;
-          break;
-        case MOD_LED_CABLE_HOLDER:
-          location = LedController::LED_LOCATION_CABLE_HOLDER;
-          break;
-        default:
-          // invalid
-          LOG_PRINT(F("Invalid location "));
-          LOG_PRINTLNF(data[2], HEX);
-          break;
-      }
-      
       if (location != LedController::LED_LOCATION_INVALID) {
         taskManager->getTask<LedController*>(LED_CONTROLLER)->setColor(location, value);
+      } else {
+        // invalid
+        LOG_PRINT(F("Invalid location "));
+        LOG_PRINTLNF(data[2], HEX);
+      }
+      break;
+    }
+    case CMD_LED_BRIGHTNESS: {
+      LedController::LED_LOCATION location = taskManager->getTask<LedController*>(LED_CONTROLLER)->resolveLocation(data[2]);
+  
+      if (location != LedController::LED_LOCATION_INVALID) {
+        taskManager->getTask<LedController*>(LED_CONTROLLER)->setBrightness(location, value);
+      } else {
+        // invalid
+        LOG_PRINT(F("Invalid location "));
+        LOG_PRINTLNF(data[2], HEX);
       }
       break;
     }

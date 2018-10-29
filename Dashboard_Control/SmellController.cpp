@@ -53,6 +53,18 @@ void SmellController::onInitialBroadcast() {
   }
 }
 
+SmellController::SMELL_LOCATION SmellController::resolveLocation(uint8_t c) {
+  switch(c) {
+    case MOD_LEFT:
+      return SMELL_LOCATION_LEFT;
+    case MOD_MIDDLE:
+      return SMELL_LOCATION_MIDDLE;
+    case MOD_RIGHT:
+      return SMELL_LOCATION_RIGHT;
+  }
+  return SMELL_LOCATION_INVALID;
+}
+
 void SmellController::releaseSmell(SmellController::SMELL_LOCATION location, uint8_t intensity) {
   if (intensity>10) return;
   if (smellPhase!=SMELL_OFF) {

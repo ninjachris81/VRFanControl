@@ -34,7 +34,11 @@ public:
 
   void setColor(LED_LOCATION location, uint8_t colorIndex);
 
+  void setBrightness(LED_LOCATION location, uint8_t value);
+
   void onPropertyValueChange(uint8_t id, uint8_t newValue, uint8_t oldValue);
+
+  LED_LOCATION resolveLocation(uint8_t c);
 
 private:
   const CRGB colors[COLOR_COUNT] = {LED_COLOR_0};

@@ -36,6 +36,8 @@ public:
   void onPropertyValueChange(uint8_t id, bool newValue, bool oldValue);
 
   void releaseSmell(SMELL_LOCATION location, uint8_t intensity);
+
+  SMELL_LOCATION resolveLocation(uint8_t c);
   
 private:
   uint8_t currentIntensity;
