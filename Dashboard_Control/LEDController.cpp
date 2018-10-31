@@ -34,8 +34,9 @@ void LedController::init() {
         break;
     }
     
-    currentColors[i].init(i, 0);
+    currentColors[i].init(i, 255);
     currentColors[i].registerValueChangeListener(this);
+    currentColors[i].setValue(0);
   }
 }
 
