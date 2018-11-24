@@ -23,8 +23,11 @@ void LedController::init() {
       case LED_LOCATION_CABLE_HOLDER:
         controllers[i] = &FastLED.addLeds<WS2812B, PIN_LED_CABLE_HOLDER, LED_COLOR_MODE>(leds[i], ledCounts[i]).setCorrection( LED_CORRECTION );
         break;
-      case LED_LOCATION_HEADLIGHTS:
-        controllers[i] = &FastLED.addLeds<WS2812B, PIN_LED_HEADLIGHTS, LED_COLOR_MODE>(leds[i], ledCounts[i]).setCorrection( LED_CORRECTION );
+      case LED_LOCATION_HEADLIGHTS_LEFT:
+        controllers[i] = &FastLED.addLeds<WS2812B, PIN_LED_HEADLIGHTS_LEFT, LED_COLOR_MODE>(leds[i], ledCounts[i]).setCorrection( LED_CORRECTION );
+        break;
+      case LED_LOCATION_HEADLIGHTS_RIGHT:
+        controllers[i] = &FastLED.addLeds<WS2812B, PIN_LED_HEADLIGHTS_RIGHT, LED_COLOR_MODE>(leds[i], ledCounts[i]).setCorrection( LED_CORRECTION );
         break;
       case LED_LOCATION_HEADLIGHTS_AMB:
         controllers[i] = &FastLED.addLeds<WS2812B, PIN_LED_HEADLIGHTS_AMB, LED_COLOR_MODE>(leds[i], ledCounts[i]).setCorrection( LED_CORRECTION );
@@ -45,7 +48,7 @@ void LedController::update() {
 
 void LedController::onInitialBroadcast() {
   for (uint8_t i=0;i<LED_STRIP_COUNT;i++) {
-    taskManager->getTask<CommController*>(COMM_CONTROLLER)->sendPackage(CMD_LED_COLOR_FB, i + '0', currentColors[i].getValue());
+    taskManager->getTask<CommController*>(COMM_CONTROLLER)->sendPackage(CMD_LED_COLOR_FB, mapIndexToMod(i) + '0', currentColors[i].getValue());
   }
 }
 
@@ -65,7 +68,7 @@ void LedController::onPropertyValueChange(uint8_t id, uint8_t newValue, uint8_t 
   fill_solid(leds[id], ledCounts[id], color);
   controllers[id]->showLeds(brightnesses[id]);
 
-  taskManager->getTask<CommController*>(COMM_CONTROLLER)->sendPackage(CMD_LED_COLOR_FB, id + '0', newValue);
+  taskManager->getTask<CommController*>(COMM_CONTROLLER)->sendPackage(CMD_LED_COLOR_FB, mapIndexToMod(id) + '0', newValue);
 }
 
 void LedController::setBrightness(LedController::LED_LOCATION location, uint8_t value) {
@@ -82,7 +85,7 @@ LedController::LED_LOCATION LedController::resolveLocation(uint8_t c) {
     case MOD_LED_CABLE_HOLDER:
       return LED_LOCATION_CABLE_HOLDER;
     case MOD_LED_HEADLIGHTS:
-      return LED_LOCATION_HEADLIGHTS;
+      return LED_LOCATION_HEADLIGHTS_LEFT;      // resolve to left
     case MOD_LED_HEADLIGHTS_AMB:
       return LED_LOCATION_HEADLIGHTS_AMB;
     case MOD_LED_MIDDLE_STRIP:
@@ -91,3 +94,12 @@ LedController::LED_LOCATION LedController::resolveLocation(uint8_t c) {
 
   return LED_LOCATION_INVALID;
 }
+
+uint8_t LedController::mapIndexToMod(uint8_t index) {
+  if (index<=LED_LOCATION_HEADLIGHTS_LEFT) {
+    return index;
+  } else {
+    return index-1;
+  }
+}
+
