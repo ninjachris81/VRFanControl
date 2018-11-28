@@ -7,7 +7,7 @@
 #include "Protocol.h"
 #include "GlobalConstants.h"
 
-LedController::LedController() : AbstractIdleTask() {
+LedController::LedController() : AbstractIntervalTask(LED_BLEND_TRIGGER_INTERVAL) {
   
 }
 
@@ -37,25 +37,41 @@ void LedController::init() {
         break;
     }
     
-    currentColors[i].init(i, 255);
+    currentColors[i].init(i, ledDefaultColors[i]);
     currentColors[i].registerValueChangeListener(this);
-    currentColors[i].setValue(0);
   }
 }
 
 void LedController::update() {
+  for (uint8_t i=0;i<LED_STRIP_COUNT;i++) {
+    if (blendIndexes[i]!=BLEND_OFF) {
+      if (blendColor(i, blendIndexes[i])) {
+        // continue blend
+        blendIndexes[i]+=LED_BLEND_STEP;
+      } else {
+        // blend finished
+        blendIndexes[i]=BLEND_OFF;
+        if (i!=4) taskManager->getTask<CommController*>(COMM_CONTROLLER)->sendPackage(CMD_LED_COLOR_FB, INDEX_TO_LED_MOD(i), currentColors[i].getValue());
+      }
+    }
+  }  
 }
 
 void LedController::onInitialBroadcast() {
   for (uint8_t i=0;i<LED_STRIP_COUNT;i++) {
-    taskManager->getTask<CommController*>(COMM_CONTROLLER)->sendPackage(CMD_LED_COLOR_FB, mapIndexToMod(i) + '0', currentColors[i].getValue());
+    if (i!=4) taskManager->getTask<CommController*>(COMM_CONTROLLER)->sendPackage(CMD_LED_COLOR_FB, INDEX_TO_LED_MOD(i), currentColors[i].getValue());
   }
 }
 
 void LedController::setColor(LED_LOCATION location, uint8_t colorIndex) {
   colorIndex = constrain(colorIndex, 0, COLOR_COUNT-1);
   location = constrain(location, 0, LED_STRIP_COUNT-1);
-  currentColors[location].setValue(colorIndex);
+
+  if (blendIndexes[location]==BLEND_OFF) {
+    currentColors[location].setValue(colorIndex);
+  } else {
+    LOG_PRINTLN(F("Blending in progress"));
+  }
 }
 
 void LedController::onPropertyValueChange(uint8_t id, uint8_t newValue, uint8_t oldValue) {
@@ -64,11 +80,7 @@ void LedController::onPropertyValueChange(uint8_t id, uint8_t newValue, uint8_t 
   LOG_PRINT(": ");
   LOG_PRINTLN(newValue);
 
-  CRGB color = colors[newValue];
-  fill_solid(leds[id], ledCounts[id], color);
-  controllers[id]->showLeds(brightnesses[id]);
-
-  taskManager->getTask<CommController*>(COMM_CONTROLLER)->sendPackage(CMD_LED_COLOR_FB, mapIndexToMod(id) + '0', newValue);
+  startBlendColor(id, oldValue);
 }
 
 void LedController::setBrightness(LedController::LED_LOCATION location, uint8_t value) {
@@ -103,3 +115,31 @@ uint8_t LedController::mapIndexToMod(uint8_t index) {
   }
 }
 
+void LedController::startBlendColor(uint8_t index, uint8_t startColor) {
+  blendIndexes[index] = 0;
+  blendStartColors[index] = startColor;
+}
+
+bool LedController::blendColor(uint8_t index, int blendStep) {
+  if (blendStep<0 || blendStep>255) return false;
+
+  LOG_PRINT(F("Blending "));
+  LOG_PRINT(index);
+  LOG_PRINT(" ");
+  LOG_PRINTLN(blendStep);
+
+  CRGB targetColor = colors[currentColors[index].getValue()];
+  CRGB color = blend(colors[blendStartColors[index]], targetColor, blendStep);
+  fill_solid(leds[index], ledCounts[index], color);
+  controllers[index]->showLeds(brightnesses[index]);
+
+  LOG_PRINT("(");
+  LOG_PRINT(color.r);
+  LOG_PRINT(",");
+  LOG_PRINT(color.g);
+  LOG_PRINT(",");
+  LOG_PRINT(color.b);
+  LOG_PRINTLN(")");
+
+  return color!=targetColor;
+}

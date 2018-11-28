@@ -269,7 +269,7 @@ void WifiController::onWebserverStatusPage() {
     s+=F("<tr><td>LED Color ");
     s+=i;
     s+=F("</td><td><div contenteditable=true id='eid_E");
-    s+=INDEX_TO_LED_MOD(i);
+    s+=FLOAT_INDEX_TO_LED_MOD(i);
     s+=F("'></div><input type=button onclick=\"sendData(this, 'e');\" value='SET'></td></tr>");
   }
   s+=F("</table></td></tr>");
@@ -280,7 +280,7 @@ void WifiController::onWebserverStatusPage() {
     s+=F("<tr><td>LED Brightness ");
     s+=i;
     s+=F("</td><td><div contenteditable=true id='eid_B");
-    s+=INDEX_TO_LED_MOD(i);
+    s+=FLOAT_INDEX_TO_LED_MOD(i);
     s+=F("'></div><input type=button onclick=\"sendData(this, 'b');\" value='SET'></td></tr>");
   }
   s+=F("</table></td></tr>");

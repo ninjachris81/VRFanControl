@@ -32,7 +32,7 @@ void CommController::update() {
       // remove garbage
       char c = COMM_SERIAL.read();
 
-      if (c!=10 && c!=13) {
+      if (c!=10 && c!=13 && c!=0) {
         LOG_PRINT(F("Chunk "));
         LOG_PRINTLNF(c, HEX);
       }
