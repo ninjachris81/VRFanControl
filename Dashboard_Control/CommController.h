@@ -5,7 +5,7 @@
 #include "CommHandler.h"
 #include "Pins.h"
 
-#define COMM_SERIAL Serial
+#define COMM_SERIAL Serial1
 
 class CommController : public AbstractTask, public CommHandler {
 public:

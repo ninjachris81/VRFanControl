@@ -16,10 +16,11 @@
   #define PIN_LED_DASHBOARD 3
   #define PIN_LED_FINS 4
   #define PIN_LED_CABLE_HOLDER 5
+  #define PIN_LED_MIDDLE_STRIP 9
   #define PIN_LED_HEADLIGHTS_LEFT 7
   #define PIN_LED_HEADLIGHTS_RIGHT 8
-  #define PIN_LED_HEADLIGHTS_AMB 9    // TBC
-  #define PIN_LED_MIDDLE_STRIP 44
+  #define PIN_LED_HEADLIGHTS_AMB_LEFT 44
+  #define PIN_LED_HEADLIGHTS_AMB_RIGHT 46
 
 #else 
   #error Unsupported board

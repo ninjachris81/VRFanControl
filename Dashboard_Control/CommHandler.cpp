@@ -73,6 +73,9 @@ void CommHandler::handlePackage(TaskManager* taskManager, uint8_t* data) {
         if (location==LedController::LED_LOCATION_HEADLIGHTS_LEFT) {
           taskManager->getTask<LedController*>(LED_CONTROLLER)->setColor(LedController::LED_LOCATION_HEADLIGHTS_LEFT, value);
           taskManager->getTask<LedController*>(LED_CONTROLLER)->setColor(LedController::LED_LOCATION_HEADLIGHTS_RIGHT, value);
+        } else if (location==LedController::LED_LOCATION_HEADLIGHTS_AMB_LEFT) {
+          taskManager->getTask<LedController*>(LED_CONTROLLER)->setColor(LedController::LED_LOCATION_HEADLIGHTS_AMB_LEFT, value);
+          taskManager->getTask<LedController*>(LED_CONTROLLER)->setColor(LedController::LED_LOCATION_HEADLIGHTS_AMB_RIGHT, value);
         } else {
           taskManager->getTask<LedController*>(LED_CONTROLLER)->setColor(location, value);
         }
@@ -90,6 +93,9 @@ void CommHandler::handlePackage(TaskManager* taskManager, uint8_t* data) {
         if (location==LedController::LED_LOCATION_HEADLIGHTS_LEFT) {
           taskManager->getTask<LedController*>(LED_CONTROLLER)->setBrightness(LedController::LED_LOCATION_HEADLIGHTS_LEFT, value);        
           taskManager->getTask<LedController*>(LED_CONTROLLER)->setBrightness(LedController::LED_LOCATION_HEADLIGHTS_RIGHT, value);        
+        } else if (location==LedController::LED_LOCATION_HEADLIGHTS_AMB_LEFT) {
+          taskManager->getTask<LedController*>(LED_CONTROLLER)->setBrightness(LedController::LED_LOCATION_HEADLIGHTS_AMB_LEFT, value);        
+          taskManager->getTask<LedController*>(LED_CONTROLLER)->setBrightness(LedController::LED_LOCATION_HEADLIGHTS_AMB_RIGHT, value);        
         } else {
           taskManager->getTask<LedController*>(LED_CONTROLLER)->setBrightness(location, value);
         }
