@@ -265,7 +265,7 @@ void WifiController::onWebserverStatusPage() {
   
   // colors
   s+=F("<tr><td colspan=2><table width=100%><th colspan=3>LED Colors</th>");
-  for (uint8_t i=0;i<LED_STRIP_COUNT;i++) {
+  for (uint8_t i=0;i<LED_FLOAT_STRIP_COUNT;i++) {
     s+=F("<tr><td>LED Color ");
     s+=i;
     s+=F("</td><td><div contenteditable=true id='eid_E");
@@ -276,7 +276,7 @@ void WifiController::onWebserverStatusPage() {
 
   // brightnesses
   s+=F("<tr><td colspan=2><table width=100%><th colspan=2>LED Brightnesses</th>");
-  for (uint8_t i=0;i<LED_STRIP_COUNT;i++) {
+  for (uint8_t i=0;i<LED_FLOAT_STRIP_COUNT;i++) {
     s+=F("<tr><td>LED Brightness ");
     s+=i;
     s+=F("</td><td><div contenteditable=true id='eid_B");

@@ -33,6 +33,11 @@ void CommHandler::handlePackage(TaskManager* taskManager, uint8_t* data) {
   }
   
   switch(data[1]) {
+    case CMD_RESTART:
+      LOG_PRINTLN("Restarting");
+      delay(500);
+      resetFunc();
+      break;
     case CMD_PING:
       sendPackage(CMD_PING_FB, MOD_NONE, 0);
 

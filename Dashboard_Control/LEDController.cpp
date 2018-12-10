@@ -40,9 +40,9 @@ void LedController::init() {
         break;
     }
     
-    currentColors[i].init(i, 255);
+    currentColors[i].init(i, ledDefaultColors[i]);
     currentColors[i].registerValueChangeListener(this);
-    currentColors[i].setValue(ledDefaultColors[i]);
+    currentColors[i].fireChangeEvent();
   }
 }
 
@@ -64,12 +64,17 @@ void LedController::update() {
 void LedController::onInitialBroadcast() {
   for (uint8_t i=0;i<LED_STRIP_COUNT;i++) {
     sendColorUpdate(i);
+    sendBrightnessUpdate(i);
   }
 }
 
 void LedController::setColor(LED_LOCATION location, uint8_t colorIndex) {
   colorIndex = constrain(colorIndex, 0, COLOR_COUNT-1);
   location = constrain(location, 0, LED_STRIP_COUNT-1);
+
+  if (colorIndex==LED_COLOR_DEFAULT) {
+    colorIndex = ledDefaultColors[location];
+  }
 
   if (blendIndexes[location]==BLEND_OFF) {
     currentColors[location].setValue(colorIndex);
@@ -88,8 +93,9 @@ void LedController::onPropertyValueChange(uint8_t id, uint8_t newValue, uint8_t 
 }
 
 void LedController::setBrightness(LedController::LED_LOCATION location, uint8_t value) {
-  brightnesses[location] = map(value, 0, 9, 0, 255);
-  controllers[location]->showLeds(brightnesses[location]);
+  brightnesses[location] = value;
+  showLeds(location);
+  sendBrightnessUpdate(location);
 }
 
 LedController::LED_LOCATION LedController::resolveLocation(uint8_t c) {
@@ -115,6 +121,10 @@ void LedController::sendColorUpdate(uint8_t index) {
   if (index!=LED_LOCATION_HEADLIGHTS_RIGHT && index!=LED_LOCATION_HEADLIGHTS_AMB_RIGHT) taskManager->getTask<CommController*>(COMM_CONTROLLER)->sendPackage(CMD_LED_COLOR_FB, INDEX_TO_LED_MOD(index), currentColors[index].getValue());
 }
 
+void LedController::sendBrightnessUpdate(uint8_t index) {
+  if (index!=LED_LOCATION_HEADLIGHTS_RIGHT && index!=LED_LOCATION_HEADLIGHTS_AMB_RIGHT) taskManager->getTask<CommController*>(COMM_CONTROLLER)->sendPackage(CMD_LED_BRIGHTNESS_FB, INDEX_TO_LED_MOD(index), brightnesses[index]);
+}
+
 void LedController::startBlendColor(uint8_t index, uint8_t startColor) {
   blendIndexes[index] = 0;
   blendStartColors[index] = startColor;
@@ -133,7 +143,7 @@ bool LedController::blendColor(uint8_t index, int blendStep) {
   CRGB targetColor = colors[currentColors[index].getValue()];
   CRGB color = blend(colors[blendStartColors[index]], targetColor, blendStep);
   fill_solid(leds[index], ledCounts[index], color);
-  controllers[index]->showLeds(brightnesses[index]);
+  showLeds(index);
 
 /*
   LOG_PRINT("(");
@@ -147,3 +157,8 @@ bool LedController::blendColor(uint8_t index, int blendStep) {
 
   return color!=targetColor;
 }
+
+void LedController::showLeds(LED_LOCATION index) {
+  controllers[index]->showLeds(map(brightnesses[index], 0, 9, 0, 255));
+}
+
