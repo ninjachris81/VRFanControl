@@ -10,28 +10,29 @@ CommController::CommController() : AbstractTask() {
 }
 
 void CommController::init() {
-  ss = new SoftwareSerial(PIN_COMM_RX, PIN_COMM_TX, false);
-  ss->begin(SERIAL_SPEED);
+  //ss = new SoftwareSerial(PIN_COMM_RX, PIN_COMM_TX, false);
+  //ss->begin(SERIAL_SPEED);
+  Serial.begin(SERIAL_SPEED);
 }
 
 void CommController::update() {
-  if (ss->available()>=DATA_PACKAGE_SIZE+1) {    // last one is \r
-    char c = ss->peek();
+  if (Serial.available()>=DATA_PACKAGE_SIZE+1) {    // last one is \r
+    char c = Serial.peek();
     if (c==CMD_IDENTIFIER) {
       uint8_t data[DATA_PACKAGE_SIZE];
       for (uint8_t i=0;i<DATA_PACKAGE_SIZE;i++) {
-        data[i] = ss->read();
+        data[i] = Serial.read();
       }
 
-      ss->read();   // remove last \n
+      Serial.read();   // remove last \n
 
-      c = ss->peek();
-      if (c==10 || c==13) ss->read();
+      c = Serial.peek();
+      if (c==10 || c==13) Serial.read();
       
       handlePackage(taskManager, data);
     } else {
       // remove garbage
-      char c = ss->read();
+      char c = Serial.read();
       
       if (c!=10 && c!=13) {
         LOG_PRINT(F("Chunk "));
@@ -55,8 +56,8 @@ void CommController::sendPackage(char cmd, char mod, uint8_t value) {
     LOG_PRINTLN(c);
   }
 
-  ss->print(CMD_IDENTIFIER);
-  ss->print(cmd);
-  ss->print(mod);
-  ss->println(c);
+  Serial.print(CMD_IDENTIFIER);
+  Serial.print(cmd);
+  Serial.print(mod);
+  Serial.println(c);
 }

@@ -50,8 +50,8 @@ void CommController::sendPackage(char cmd, char mod, uint8_t value) {
     LOG_PRINTLN(c);
   }
   
-  Serial1.print(CMD_IDENTIFIER);
-  Serial1.print(cmd);
-  Serial1.print(mod);
-  Serial1.println(c);
+  COMM_SERIAL.print(CMD_IDENTIFIER);
+  COMM_SERIAL.print(cmd);
+  COMM_SERIAL.print(mod);
+  COMM_SERIAL.println(c);
 }
