@@ -29,7 +29,7 @@ void LevelController::update() {
 
 void LevelController::onInitialBroadcast() {
   for (uint8_t i=0;i<LEVEL_COUNT;i++) {
-    taskManager->getTask<CommController*>(COMM_CONTROLLER)->sendPackage(CMD_LEVEL_FB, i + '0', levels[i].getValue());
+    taskManager->getTask<CommController*>(COMM_CONTROLLER)->sendPackage(CMD_LEVEL_FB, INDEX_TO_LOCATION_MOD(i), levels[i].getValue());
   }  
 }
 
@@ -44,5 +44,5 @@ void LevelController::onPropertyValueChange(uint8_t id, uint8_t newValue, uint8_
   LOG_PRINT(" ");
   LOG_PRINTLN(newValue);
   
-  taskManager->getTask<CommController*>(COMM_CONTROLLER)->sendPackage(CMD_LEVEL_FB, id + '0', newValue);
+  taskManager->getTask<CommController*>(COMM_CONTROLLER)->sendPackage(CMD_LEVEL_FB, INDEX_TO_LOCATION_MOD(id), newValue);
 }

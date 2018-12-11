@@ -233,9 +233,9 @@ void WifiController::onWebserverStatusPage() {
   s+=F("<tr><td colspan=2><table width=100%><th colspan=2>Levels</th>");
   for (uint8_t i=0;i<LEVEL_COUNT;i++) {
     s+=F("<tr><td width=50%>Level ");
-    s+=i;
+    s+=INDEX_TO_LOCATION_MOD(i);
     s+=F("</td><td><span id='eid_L");
-    s+=i;
+    s+=INDEX_TO_LOCATION_MOD(i);
     s+=F("'></span></td></tr>");
   }
   s+=F("</table></td></tr>");
