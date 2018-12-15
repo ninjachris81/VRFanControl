@@ -37,17 +37,23 @@ void WifiController::init() {
   LOG_PRINTLN(F("Setting AP"));
 
   WiFi.disconnect();
-  if (WiFi.softAP(AP_WIFI_NAME, WIFI_PASSWORD, AP_CHANNEL, AP_VISIBILITY)) {
-    LOG_PRINT(F("AP IP: "));
-    LOG_PRINTLN(WiFi.softAPIP().toString());
 
-    dnsServer.setTTL(300);
-    dnsServer.setErrorReplyCode(DNSReplyCode::ServerFailure);
-    dnsServer.start(DNS_PORT, WEBSERVER_DNS_NAME, WiFi.softAPIP());
-    
-//    WiFi.config(WiFi.softAPIP(), WEBSERVER_DNS_NAME);
+  if (WIFI_CLIENT_MODE) {
+    WiFi.hostname(WEBSERVER_DNS_NAME);
+    WiFi.begin(WIFI_CLIENT_SSID, WIFI_CLIENT_PASSWORD);
   } else {
-    LOG_PRINTLN(F("Failed to set AP"));
+    if (WiFi.softAP(AP_WIFI_NAME, WIFI_AP_PASSWORD, AP_CHANNEL, AP_VISIBILITY)) {
+      LOG_PRINT(F("AP IP: "));
+      LOG_PRINTLN(WiFi.softAPIP().toString());
+  
+      dnsServer.setTTL(300);
+      dnsServer.setErrorReplyCode(DNSReplyCode::ServerFailure);
+      dnsServer.start(DNS_PORT, WEBSERVER_DNS_NAME, WiFi.softAPIP());
+      
+  //    WiFi.config(WiFi.softAPIP(), WEBSERVER_DNS_NAME);
+    } else {
+      LOG_PRINTLN(F("Failed to set AP"));
+    }
   }
 
   LOG_PRINTLN(F("Init ws server"));
@@ -70,6 +76,17 @@ void WifiController::init() {
 }
 
 void WifiController::update() {
+  int newStatus = WiFi.status();
+  if (lastWifiStatus!=newStatus) {
+    LOG_PRINT(F("Wifi status changed to: "));
+    LOG_PRINTLN(newStatus==WL_CONNECTED ? "Connected" : newStatus==WL_DISCONNECTED ? "Disconnected" : String(newStatus));
+    if (newStatus==WL_CONNECTED) {
+      LOG_PRINT(F("Wifi IP: "));
+      LOG_PRINTLN(WiFi.localIP());
+    }
+  }
+  lastWifiStatus = newStatus;
+  
   updateDataServer();
   wsServer->loop();
   webServer->handleClient();
@@ -194,11 +211,11 @@ void WifiController::dbPingbackReceived() {
 void WifiController::onWebserverStatusPage() {  
   String s = F("<!DOCTYPE html><html><head><meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\"><link rel=\"stylesheet\" type=\"text/css\" href=\"style.css\"><link rel=\"icon\" href=\"data:image/png;base64,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\"><script src=\"script.js\"></script><title>Demo Status</title><body>");
 
-#ifdef ENABLE_BASIC_AUTH
+if (ENABLE_BASIC_AUTH) {
   if (!webServer->authenticate(BASICAUTH_USERNAME, BASICAUTH_PASSWORD)) {
     return webServer->requestAuthentication();
   }
-#endif
+}
   
   s+=F("<table align=center><th>Item</th><th>Value</th>");
 

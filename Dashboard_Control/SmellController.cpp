@@ -84,9 +84,9 @@ void SmellController::releaseSmell(SmellController::SMELL_LOCATION location, uin
   LOG_PRINTLN(F("Init fan"));
 
   taskManager->getTask<FanController*>(FAN_CONTROLLER)->saveCurrentSpeed();
-  taskManager->getTask<FanController*>(FAN_CONTROLLER)->setSpeedLevel(EMIT_SPEED_LEVEL);
+  taskManager->getTask<FanController*>(FAN_CONTROLLER)->setSpeedLevel(emitSpeedLevels[location]);
   
-  triggerUpdateDelay(500);    // give the fan 500 ms to turn on
+  triggerUpdateDelay(FAN_TURNON_TIME_MS);    // give the fan time to turn on
 }
 
 void SmellController::onPropertyValueChange(uint8_t id, bool newValue, bool oldValue) {

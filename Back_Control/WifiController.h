@@ -7,16 +7,21 @@
 #include <DNSServer.h>
 #include <WebSocketsServer.h>
 #include "CommHandler.h"
+#include "GlobalConstants.h"
 
+#define WIFI_CLIENT_MODE true
+
+// CLIENT MODE
+#define WIFI_CLIENT_SSID "TP-LINK_EEC0"
+
+// SERVER MODE
 #define AP_WIFI_NAME "FAWControl"
 #define AP_CHANNEL 1
 #define AP_VISIBILITY 0   // 0 = visible, 1 = hidden
 
-#define LEVEL_COUNT 3
-
 #define WEBSERVER_DNS_NAME "fawcontrol"
 
-//#define ENABLE_BASIC_AUTH
+#define ENABLE_BASIC_AUTH false
 
 #define DNS_PORT 53
 
@@ -56,6 +61,8 @@ public:
   uint64_t dbPingTrigger = 0;
   
 private:
+  int lastWifiStatus = -1;
+  
   static uint64_t lastDBPing;
 
   static WifiController* mInstance;

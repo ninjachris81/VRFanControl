@@ -7,7 +7,7 @@
 #include "GlobalConstants.h"
 #include "InitialBroadcastSupport.h"
 
-#define EMIT_SPEED_LEVEL 5
+#define FAN_TURNON_TIME_MS 200
 
 class SmellController : public AbstractTriggerTask, public Property<bool>::ValueChangeListener, public InitialBroadcastSupport  {
 public:
@@ -43,6 +43,8 @@ private:
   uint8_t currentIntensity;
   SMELL_LOCATION currentLocation = SMELL_LOCATION_INVALID;
   SMELL_PHASE smellPhase = SMELL_OFF;
+
+  const uint8_t emitSpeedLevels[MM_COUNT] PROGMEM = {EMIT_SPEED_LEVEL_LEFT, EMIT_SPEED_LEVEL_MIDDLE, EMIT_SPEED_LEVEL_RIGHT};
 
   Property<bool> mmStates[MM_COUNT];
   
