@@ -4,7 +4,6 @@
 
 #include "SeatController.h"
 #include "CommController.h"
-#include "WifiController.h"
 #include "Protocol.h"
 #include "TaskIDs.h"
 #include "Debug.h"
@@ -29,40 +28,40 @@ void CommHandler::handlePackage(TaskManager* taskManager, uint8_t* data) {
     case CMD_RESTART:
       LOG_PRINTLN("Restarting");
       delay(500);
-      ESP.restart();
+      resetFunc();
       break;
     case CMD_PING:
       sendPackage(CMD_PING_FB, 'X', 0);
       break;
     case CMD_PING_FB:
-      taskManager->getTask<WifiController*>(WIFI_CONTROLLER)->dbPingbackReceived();
+      //taskManager->getTask<WifiController*>(WIFI_CONTROLLER)->dbPingbackReceived();
       break;
     case CMD_VAPO:
       taskManager->getTask<CommController*>(COMM_CONTROLLER)->sendPackage(data[1], data[2], value);
       break;
     case CMD_VAPO_FB:
-      taskManager->getTask<WifiController*>(WIFI_CONTROLLER)->notifyPackage(data);
+      //taskManager->getTask<WifiController*>(WIFI_CONTROLLER)->notifyPackage(data);
       break;
     case CMD_FAN:
       taskManager->getTask<CommController*>(COMM_CONTROLLER)->sendPackage(data[1], data[2], value);
       break;
     case CMD_FAN_FB:
-      taskManager->getTask<WifiController*>(WIFI_CONTROLLER)->notifyPackage(data);
+      //taskManager->getTask<WifiController*>(WIFI_CONTROLLER)->notifyPackage(data);
       break;
     case CMD_LEVEL_FB:
-      taskManager->getTask<WifiController*>(WIFI_CONTROLLER)->notifyPackage(data);
+      //taskManager->getTask<WifiController*>(WIFI_CONTROLLER)->notifyPackage(data);
       break;
     case CMD_MM_FB:
-      taskManager->getTask<WifiController*>(WIFI_CONTROLLER)->notifyPackage(data);
+      //taskManager->getTask<WifiController*>(WIFI_CONTROLLER)->notifyPackage(data);
       break;
     case CMD_LED_COLOR:
       taskManager->getTask<CommController*>(COMM_CONTROLLER)->sendPackage(data[1], data[2], value);
       break;
     case CMD_LED_COLOR_FB:
-      taskManager->getTask<WifiController*>(WIFI_CONTROLLER)->notifyPackage(data);
+      //taskManager->getTask<WifiController*>(WIFI_CONTROLLER)->notifyPackage(data);
       break;
     case CMD_LED_BRIGHTNESS_FB:
-      taskManager->getTask<WifiController*>(WIFI_CONTROLLER)->notifyPackage(data);
+      //taskManager->getTask<WifiController*>(WIFI_CONTROLLER)->notifyPackage(data);
       break;
     case CMD_SEAT: {
       SeatController::SEAT_DIRECTION direction = SeatController::SEAT_STOP;

@@ -4,7 +4,6 @@
 #include "Pins.h"
 #include "Protocol.h"
 #include "TaskIDs.h"
-#include "WifiController.h"
 
 SeatController::SeatController() : AbstractIntervalTask(SEAT_CHECK_INTERVAL) {
 }
@@ -81,20 +80,20 @@ void SeatController::onPropertyValueChange(uint8_t id, int8_t newValue, int8_t o
           break;
       }
       
-      taskManager->getTask<WifiController*>(WIFI_CONTROLLER)->sendPackage(CMD_SEAT_MOVE_FB, MOD_NONE, newValue, true);
+      //taskManager->getTask<WifiController*>(WIFI_CONTROLLER)->sendPackage(CMD_SEAT_MOVE_FB, MOD_NONE, newValue, true);
       break;
     case PROP_CURRENT_POSITION:
       LOG_PRINT(F("Seat position "));
       LOG_PRINTLN(SEAT_POS_TO_STRING(newValue));
 
-      taskManager->getTask<WifiController*>(WIFI_CONTROLLER)->sendPackage(CMD_SEAT_POS_FB, MOD_NONE, newValue, true);
+      //taskManager->getTask<WifiController*>(WIFI_CONTROLLER)->sendPackage(CMD_SEAT_POS_FB, MOD_NONE, newValue, true);
 
       break;
     case PROP_SWITCH_FORWARD:
       LOG_PRINT(F("Seat switch forward "));
       LOG_PRINTLN(newValue);
       
-      taskManager->getTask<WifiController*>(WIFI_CONTROLLER)->sendPackage(CMD_SEAT_SWITCH_FB, MOD_FORWARD, newValue, true);
+      //taskManager->getTask<WifiController*>(WIFI_CONTROLLER)->sendPackage(CMD_SEAT_SWITCH_FB, MOD_FORWARD, newValue, true);
       if (newValue) currentMovement.setValue(SEAT_STOP);
 
       break;
@@ -102,7 +101,7 @@ void SeatController::onPropertyValueChange(uint8_t id, int8_t newValue, int8_t o
       LOG_PRINT(F("Seat switch backward "));
       LOG_PRINTLN(newValue);
       
-      taskManager->getTask<WifiController*>(WIFI_CONTROLLER)->sendPackage(CMD_SEAT_SWITCH_FB, MOD_BACKWARD, newValue, true);
+      //taskManager->getTask<WifiController*>(WIFI_CONTROLLER)->sendPackage(CMD_SEAT_SWITCH_FB, MOD_BACKWARD, newValue, true);
       if (newValue) currentMovement.setValue(SEAT_STOP);
       
       break;

@@ -2,13 +2,11 @@
 #include <TaskManager.h>
 
 #include "SeatController.h"
-#include "WifiController.h"
 #include "CommController.h"
 
 TaskManager taskManager;
 
 SeatController seatController;
-WifiController wifiController;
 CommController commController;
 
 void setup() {
@@ -16,7 +14,6 @@ void setup() {
   //LOG_WAIT();
 
   taskManager.registerTask(&seatController);  
-  taskManager.registerTask(&wifiController);
   taskManager.registerTask(&commController);
   
   taskManager.init();

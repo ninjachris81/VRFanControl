@@ -18,6 +18,8 @@ public:
   virtual void sendPackage(uint8_t *data) = 0;
 
   virtual void sendPackage(char cmd, char mod, uint8_t value) = 0;
+
+  void(* resetFunc) (void) = 0;
 };
 
 #endif    //COMMHANDLER_H
