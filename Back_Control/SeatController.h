@@ -12,6 +12,9 @@
 
 #define SEAT_CHECK_INTERVAL 100
 
+#define SEAT_RELAY_OFF HIGH
+#define SEAT_RELAY_ON LOW
+
 class SeatController : public AbstractIntervalTask, public Property<int8_t>::ValueChangeListener {
 public:
   SeatController();

@@ -3,11 +3,13 @@
 
 #include "SeatController.h"
 #include "CommController.h"
+#include "NetworkController.h"
 
 TaskManager taskManager;
 
 SeatController seatController;
 CommController commController;
+NetworkController networkController;
 
 void setup() {
   LOG_INIT();
@@ -15,6 +17,7 @@ void setup() {
 
   taskManager.registerTask(&seatController);  
   taskManager.registerTask(&commController);
+  taskManager.registerTask(&networkController);
   
   taskManager.init();
 

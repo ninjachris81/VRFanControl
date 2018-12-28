@@ -18,8 +18,8 @@ void SeatController::init() {
   pinMode(PIN_SEAT_SWITCH_BACKWARD, INPUT);
 
   // default values
-  digitalWrite(PIN_SEAT_FORWARD, LOW);
-  digitalWrite(PIN_SEAT_BACKWARD, LOW);
+  digitalWrite(PIN_SEAT_FORWARD, SEAT_RELAY_OFF);
+  digitalWrite(PIN_SEAT_BACKWARD, SEAT_RELAY_OFF);
 
   currentMovement.init(PROP_CURRENT_MOVEMENT, SEAT_STOP);
   currentMovement.registerValueChangeListener(this);
@@ -36,8 +36,8 @@ void SeatController::init() {
 }
 
 void SeatController::update() {
-  switchForward.setValue(digitalRead(PIN_SEAT_SWITCH_FORWARD)==HIGH);
-  switchBackward.setValue(digitalRead(PIN_SEAT_SWITCH_BACKWARD)==HIGH);
+  switchForward.setValue(digitalRead(PIN_SEAT_SWITCH_FORWARD)==SEAT_RELAY_ON);
+  switchBackward.setValue(digitalRead(PIN_SEAT_SWITCH_BACKWARD)==SEAT_RELAY_ON);
 
   if (switchForward.getValue() && switchBackward.getValue()) {
     currentPosition.setValue(SEAT_ERROR);    // error
@@ -67,16 +67,16 @@ void SeatController::onPropertyValueChange(uint8_t id, int8_t newValue, int8_t o
       
       switch(newValue) {
         case SEAT_STOP:
-          digitalWrite(PIN_SEAT_FORWARD, LOW);
-          digitalWrite(PIN_SEAT_BACKWARD, LOW);
+          digitalWrite(PIN_SEAT_FORWARD, SEAT_RELAY_OFF);
+          digitalWrite(PIN_SEAT_BACKWARD, SEAT_RELAY_OFF);
           break;
         case SEAT_FORWARD:
-          digitalWrite(PIN_SEAT_FORWARD, HIGH);
-          digitalWrite(PIN_SEAT_BACKWARD, LOW);
+          digitalWrite(PIN_SEAT_FORWARD, SEAT_RELAY_ON);
+          digitalWrite(PIN_SEAT_BACKWARD, SEAT_RELAY_OFF);
           break;
         case SEAT_BACKWARD:
-          digitalWrite(PIN_SEAT_FORWARD, LOW);
-          digitalWrite(PIN_SEAT_BACKWARD, HIGH);
+          digitalWrite(PIN_SEAT_FORWARD, SEAT_RELAY_OFF);
+          digitalWrite(PIN_SEAT_BACKWARD, SEAT_RELAY_ON);
           break;
       }
       
