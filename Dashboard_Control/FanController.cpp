@@ -47,8 +47,13 @@ void FanController::onPropertyValueChange(uint8_t id, uint8_t newValue, uint8_t 
   LOG_PRINT(": ");
   LOG_PRINTLN(newValue);
 
-  int pwmValue = 200 + map(pow(newValue, 2), 0, 81, 0, 824);
+  //int pwmValue = 200 + map(pow(newValue, 2), 0, 81, 0, 824);
+  //int pwmValue = map(newValue, 0, 9, 0, 660);
+  int pwmValue = newValue * 4;
   analogWrite(PIN_MOSFET_FAN, pwmValue);
 
+  LOG_PRINT(F("Speed Raw "));
+  LOG_PRINTLN(pwmValue);
+  
   taskManager->getTask<CommController*>(COMM_CONTROLLER)->sendPackage(CMD_FAN_FB, MOD_NONE, newValue);
 }

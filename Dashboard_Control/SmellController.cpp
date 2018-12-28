@@ -37,7 +37,7 @@ void SmellController::update() {
       LOG_PRINTLN(F("Fan delay"));
       smellPhase = SMELL_DELAY_FAN;
       mmStates[currentLocation].setValue(false);
-      triggerUpdateDelay(1000);     // delay the fan for 1 sec
+      triggerUpdateDelay(2000);     // delay the fan for 1 sec
       break;
     case SMELL_DELAY_FAN:
       LOG_PRINTLN(F("Smell finished"));
