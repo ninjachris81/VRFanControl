@@ -111,6 +111,11 @@ void CommHandler::handlePackage(TaskManager* taskManager, uint8_t* data) {
       }
       break;
     }
+    case CMD_SEAT_POS_FB:
+    case CMD_SEAT_SWITCH_FB:
+    case CMD_SEAT_MOVE_FB:
+    // ignore these
+      break;
     default:
       LOG_PRINT(F("Unknown command "));
       LOG_PRINTLNF(data[1], HEX);

@@ -27,6 +27,8 @@ void NetworkController::init() {
     0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED
   };
   //IPAddress ip(192, 168, 0, 1);
+
+  LOG_PRINTLN(F("Ethernet start"));
   
   Ethernet.begin(mac/*, ip*/);
 
@@ -48,6 +50,7 @@ void NetworkController::init() {
 
   dataServer = new EthernetServer(8080);
 
+  LOG_PRINTLN(F("Dataserver start"));
   dataServer->begin();
   LOG_PRINT(F("Local IP: "));
   LOG_PRINTLN(Ethernet.localIP());
@@ -198,7 +201,9 @@ void NetworkController::sendPackage(uint8_t *data, bool notify) {
   }
 
   if (notify) {
-    notifyPackage(data);
+    //notifyPackage(data);
+    data[3] = data[3] - '0';
+    instance()->getTaskManager()->getTask<CommController*>(COMM_CONTROLLER)->sendPackage(data);
   }
 }
 

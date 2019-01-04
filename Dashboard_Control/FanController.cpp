@@ -27,9 +27,13 @@ void FanController::onInitialBroadcast() {
 
 void FanController::saveCurrentSpeed() {
   savedFanSpeed = fanSpeed.getValue();
+  LOG_PRINT(F("Saved speed "));
+  LOG_PRINTLN(savedFanSpeed);
 }
 
 void FanController::restoreCurrentSpeed() {
+  LOG_PRINT(F("Restoring speed "));
+  LOG_PRINTLN(savedFanSpeed);
   fanSpeed.setValue(savedFanSpeed);
 }
 

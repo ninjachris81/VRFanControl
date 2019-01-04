@@ -15,6 +15,8 @@
 #define SEAT_RELAY_OFF HIGH
 #define SEAT_RELAY_ON LOW
 
+#define SEAT_SWITCH_ON HIGH
+
 class SeatController : public AbstractIntervalTask, public Property<int8_t>::ValueChangeListener {
 public:
   SeatController();
