@@ -12,7 +12,11 @@ CommHandler::CommHandler() {
 }
 
 void CommHandler::handlePackage(TaskManager* taskManager, uint8_t* data) {
-  if (!data[0]==CMD_IDENTIFIER) return;
+  if (!data[0]==CMD_IDENTIFIER) {
+    LOG_PRINT(F("Wrong package id: "));
+    LOG_PRINTLNF(data[0], HEX);
+    return;
+  }
 
   uint8_t value = data[3] - '0';
 

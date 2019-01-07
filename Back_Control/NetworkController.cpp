@@ -66,11 +66,22 @@ void NetworkController::update() {
 
   if (activeClient) {
     if (activeClient.connected()) {
-      if (activeClient.available() >= DATA_PACKAGE_SIZE) {
-        uint8_t data[DATA_PACKAGE_SIZE];
-        activeClient.read(data, DATA_PACKAGE_SIZE);
-        //LOG_PRINTLN(data);
-        handlePackage(taskManager, data);
+      uint8_t timeout = 20;
+      
+      while (activeClient.available() >= DATA_PACKAGE_SIZE) {
+        int b = activeClient.peek();
+        if (b==CMD_IDENTIFIER) {
+          uint8_t data[DATA_PACKAGE_SIZE];
+          activeClient.read(data, DATA_PACKAGE_SIZE);
+          //LOG_PRINTLN(data);
+          handlePackage(taskManager, data);
+        } else {
+          // remove invalid char
+          activeClient.read();
+        }
+        
+        timeout--;
+        if (timeout==0) break;
       }
     } else {
       LOG_PRINTLN(F("Client disconnected"));
@@ -189,7 +200,7 @@ void NetworkController::sendPackage(uint8_t *data) {
   sendPackage(data, false);
 }
 
-void NetworkController::sendPackage(uint8_t *data, bool notify) {
+void NetworkController::sendPackage(uint8_t *data, const bool notify) {
   if (activeClient) {
     if (activeClient.connected()) {
       for (uint8_t i=0;i<DATA_PACKAGE_SIZE;i++) {
@@ -211,7 +222,7 @@ void NetworkController::sendPackage(char cmd, char mod, uint8_t value) {
   sendPackage(cmd, mod, value, false);
 }
 
-void NetworkController::sendPackage(char cmd, char mod, uint8_t value, bool notify) {
+void NetworkController::sendPackage(char cmd, char mod, uint8_t value, const bool notify) {
   uint8_t package[DATA_PACKAGE_SIZE];
 
   package[0] = CMD_IDENTIFIER;

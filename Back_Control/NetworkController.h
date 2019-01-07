@@ -29,11 +29,11 @@ public:
 
   void sendPackage(uint8_t *data);
 
-  void sendPackage(uint8_t *data, bool notify);
+  void sendPackage(uint8_t *data, const bool notify);
 
   void sendPackage(char cmd, char mod, uint8_t value);
 
-  void sendPackage(char cmd, char mod, uint8_t value, bool notify);
+  void sendPackage(char cmd, char mod, uint8_t value, const bool notify);
 
   //static void onWebSocketEvent(uint8_t num, WStype_t type, uint8_t * payload, size_t length);
 
