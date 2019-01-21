@@ -11,7 +11,7 @@
 
 NetworkController* NetworkController::mInstance;
 //WebSocketsServer* NetworkController::wsServer;
-EthernetClient NetworkController::activeClient;
+//EthernetClient NetworkController::activeClient;
 //uint64_t NetworkController::lastDBPing = 0;
 
 NetworkController::NetworkController() : AbstractTask() {
@@ -48,10 +48,10 @@ void NetworkController::init() {
   wsServer->onEvent(&NetworkController::onWebSocketEvent);
   */
 
-  dataServer = new EthernetServer(8080);
+  dataServer = new EthernetUDP();
 
   LOG_PRINTLN(F("Dataserver start"));
-  dataServer->begin();
+  dataServer->begin(8080);
   LOG_PRINT(F("Local IP: "));
   LOG_PRINTLN(Ethernet.localIP());
 }
@@ -64,33 +64,17 @@ void NetworkController::update() {
     last_dhcp = millis();
   }
 
-  if (activeClient) {
-    if (activeClient.connected()) {
-      uint8_t timeout = 20;
-      
-      while (activeClient.available() >= DATA_PACKAGE_SIZE) {
-        int b = activeClient.peek();
-        if (b==CMD_IDENTIFIER) {
-          uint8_t data[DATA_PACKAGE_SIZE];
-          activeClient.read(data, DATA_PACKAGE_SIZE);
-          //LOG_PRINTLN(data);
-          handlePackage(taskManager, data);
-        } else {
-          // remove invalid char
-          activeClient.read();
-        }
-        
-        timeout--;
-        if (timeout==0) break;
+  int packetSize = dataServer->parsePacket();
+  if (packetSize) {
+    uint8_t data[DATA_PACKAGE_SIZE];
+    int readDataSize = dataServer->read(data, DATA_PACKAGE_SIZE);
+    if (readDataSize>=DATA_PACKAGE_SIZE) {
+      handlePackage(taskManager, data);
+      int remaining = dataServer->available();
+      if (remaining>0) {
+        LOG_PRINT(F("Remaining bytes: "));
+        LOG_PRINTLN(remaining);
       }
-    } else {
-      LOG_PRINTLN(F("Client disconnected"));
-      activeClient.stop();
-    }
-  } else {
-    activeClient = dataServer->available();
-    if (activeClient) {
-      LOG_PRINTLN(F("Client connected"));
     }
   }
 
@@ -201,15 +185,9 @@ void NetworkController::sendPackage(uint8_t *data) {
 }
 
 void NetworkController::sendPackage(uint8_t *data, const bool notify) {
-  if (activeClient) {
-    if (activeClient.connected()) {
-      for (uint8_t i=0;i<DATA_PACKAGE_SIZE;i++) {
-        activeClient.write(data[i]);
-      }
-      activeClient.println("");
-      activeClient.flush();
-    }
-  }
+  dataServer->beginPacket(dataServer->remoteIP(), dataServer->remotePort());
+  dataServer->write(data, DATA_PACKAGE_SIZE);
+  dataServer->endPacket();
 
   if (notify) {
     //notifyPackage(data);

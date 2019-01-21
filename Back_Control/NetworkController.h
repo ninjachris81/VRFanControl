@@ -7,7 +7,7 @@
 #include "CommHandler.h"
 //#include <WebSocketsServer.h>
 
-#define DHCP_TIMEOUT_MS 60000
+#define DHCP_TIMEOUT_MS 120000
 
 #define DB_PING_INTERVAL 4000
 
@@ -44,14 +44,14 @@ public:
 private:
   static NetworkController* mInstance;
 
-  EthernetServer* dataServer;
+  EthernetUDP* dataServer;
   uint64_t last_dhcp = 0;
 
   //static uint64_t lastDBPing;
 
   uint64_t dbPingTrigger = 0;
 
-  static EthernetClient activeClient;
+  //static EthernetClient activeClient;
 
   //static WebSocketsServer* wsServer;
 
