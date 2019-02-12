@@ -46,22 +46,22 @@ void FanController::setSpeedLevel(uint8_t index, uint8_t speedLevel) {
       speedValue = 0;
       break;
     case 1:
-      speedValue = 10;
+      speedValue = 36;
       break;
     case 2:
-      speedValue = 14;
+      speedValue = 38;
       break;
     case 3:
-      speedValue = 20;
+      speedValue = 40;
       break;
     case 4:
-      speedValue = 32;
-      break;
-    case 5:
       speedValue = 45;
       break;
+    case 5:
+      speedValue = 50;
+      break;
     case 6:
-      speedValue = 60;
+      speedValue = 55;
       break;
     case 7:
       speedValue = 80;
