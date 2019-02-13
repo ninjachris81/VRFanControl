@@ -30,7 +30,7 @@ void SmellController::update() {
       
       LOG_PRINT(F("Smell on"));
       digitalWrite(PIN_SMELL, LOW);   // smell on
-      triggerUpdateDelay(currrentIntensity);
+      triggerUpdateDelay(currentIntensity);
       break;
     case SMELL_VAPO:
       smellPhase = SMELL_DELAY_FAN;
@@ -52,10 +52,10 @@ void SmellController::releaseSmell(uint16_t intensity) {
     return;
   }
   
-  currrentIntensity = intensity;
+  currentIntensity = intensity;
   
   LOG_PRINT(F("Setting smell for "));
-  LOG_PRINTLN(currrentIntensity);
+  LOG_PRINTLN(currentIntensity);
 
   smellPhase = SMELL_INIT_FAN;
   orgSpeedLevel = taskManager->getTask<FanController*>(FAN_CONTROLLER)->getSpeedLevel(SPEED_LEFT);

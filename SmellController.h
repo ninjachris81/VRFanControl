@@ -24,7 +24,7 @@ public:
   
 private:
   uint8_t orgSpeedLevel;
-  uint16_t currrentIntensity;
+  uint16_t currentIntensity;
   SMELL_PHASE smellPhase = SMELL_OFF;
   
 };
