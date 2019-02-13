@@ -12,8 +12,8 @@ void FanController::init() {
   pinMode(MOSFET_PIN_LEFT, OUTPUT);
   pinMode(MOSFET_PIN_RIGHT, OUTPUT);
 
-  analogWrite(MOSFET_PIN_LEFT, SPEED_MIN);
-  analogWrite(MOSFET_PIN_RIGHT, SPEED_MIN);
+  analogWrite(MOSFET_PIN_LEFT, 0);
+  analogWrite(MOSFET_PIN_RIGHT, 0);
 
   for (uint8_t i=0;i<SPEED_COUNT;i++) {
     speeds[i].registerValueChangeListener(this);
@@ -25,8 +25,8 @@ void FanController::init() {
 void FanController::update() {
   for (uint8_t i=0;i<SPEED_COUNT;i++) {
     if (boosts[i]) {
-      
       boosts[i] = false;
+      speeds[i].fireChangeEvent();
     }
   }
 }
@@ -83,6 +83,12 @@ void FanController::onPropertyValueChange(uint8_t id, uint8_t newValue, uint8_t 
   LOG_PRINT(id);
   LOG_PRINT(": ");
   LOG_PRINTLN(newValue);
+
+  if (oldValue==0) {
+    boosts[id] = true;
+    newValue = 100;
+    triggerUpdateDelay(100);
+  }
   
   if (id==SPEED_LEFT) analogWrite(MOSFET_PIN_LEFT, newValue);
   if (id==SPEED_RIGHT) analogWrite(MOSFET_PIN_RIGHT, newValue);

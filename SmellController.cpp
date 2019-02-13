@@ -15,9 +15,9 @@ void SmellController::init() {
   /*
   for (uint8_t i=0;i<5;i++) {
     digitalWrite(PIN_SMELL, HIGH);
-    delay(200);
+    delay(1000);
     digitalWrite(PIN_SMELL, LOW);
-    delay(200);
+    delay(1000);
   }*/
 }
 
@@ -28,11 +28,13 @@ void SmellController::update() {
     case SMELL_INIT_FAN:
       smellPhase = SMELL_VAPO;
       
+      LOG_PRINT(F("Smell on"));
       digitalWrite(PIN_SMELL, LOW);   // smell on
       triggerUpdateDelay(currrentIntensity);
       break;
     case SMELL_VAPO:
       smellPhase = SMELL_DELAY_FAN;
+      LOG_PRINT(F("Smell off"));
       digitalWrite(PIN_SMELL, HIGH);  // smell off
       triggerUpdateDelay(1000);     // delay the fan for 1 sec
       break;
