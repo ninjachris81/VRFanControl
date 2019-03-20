@@ -32,15 +32,13 @@ void NetworkController::init() {
   
   Ethernet.begin(mac/*, ip*/);
 
-/*
   if (Ethernet.hardwareStatus() == EthernetNoHardware) {
     LOG_PRINTLN(F("Ethernet HW fail"));
   }
-  
+
   if (Ethernet.linkStatus() == LinkOFF) {
     LOG_PRINTLN(F("Ethernet cable is not connected."));
   }
-  */
 
 /*
   wsServer = new WebSocketsServer(81);
@@ -66,6 +64,9 @@ void NetworkController::update() {
 
   int packetSize = dataServer->parsePacket();
   if (packetSize) {
+    LOG_PRINT(F("Received UDP: "));
+    LOG_PRINTLN(packetSize);
+    
     uint8_t data[DATA_PACKAGE_SIZE];
     int readDataSize = dataServer->read(data, DATA_PACKAGE_SIZE);
     if (readDataSize>=DATA_PACKAGE_SIZE) {
@@ -185,10 +186,19 @@ void NetworkController::sendPackage(uint8_t *data) {
 }
 
 void NetworkController::sendPackage(uint8_t *data, const bool notify) {
-  dataServer->beginPacket(dataServer->remoteIP(), dataServer->remotePort());
-  dataServer->write(data, DATA_PACKAGE_SIZE);
-  dataServer->endPacket();
+  if (dataServer->remoteIP()==IPAddress(0,0,0,0)) {
+    LOG_PRINTLN(F("No remote IP"));
+  } else {
+    LOG_PRINT(F("Sending package to "));
+    LOG_PRINT(dataServer->remoteIP());
+    LOG_PRINT(":");
+    LOG_PRINTLN(dataServer->remotePort());
 
+    dataServer->beginPacket(dataServer->remoteIP(), dataServer->remotePort());
+    dataServer->write(data, DATA_PACKAGE_SIZE);
+    dataServer->endPacket();
+  }
+  
   if (notify) {
     //notifyPackage(data);
     data[3] = data[3] - '0';

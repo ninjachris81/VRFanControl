@@ -1,6 +1,8 @@
 #include <LogHelper.h>
 #include <TaskManager.h>
 
+//#define LEVEL_SUPPORT
+
 #include "FanController.h"
 #include "SmellController.h"
 #include "CommController.h"
@@ -14,8 +16,10 @@ TaskManager taskManager;
 FanController fanController;
 SmellController smellController;
 CommController commController;
-LevelController levelController;
 LedController ledController;
+#ifdef LEVEL_SUPPORT
+  LevelController levelController;
+#endif
 
 void setup() {
   LOG_INIT();
@@ -24,16 +28,22 @@ void setup() {
   taskManager.registerTask(&fanController);
   taskManager.registerTask(&smellController);
   taskManager.registerTask(&commController);
-  taskManager.registerTask(&levelController);
   taskManager.registerTask(&ledController);
+#ifdef LEVEL_SUPPORT
+  taskManager.registerTask(&levelController);
+#endif
   
   taskManager.init();
 
   InitialBroadcastSupport::init();
   InitialBroadcastSupport::registerObject(&fanController);
   InitialBroadcastSupport::registerObject(&smellController);
-  InitialBroadcastSupport::registerObject(&levelController);
   InitialBroadcastSupport::registerObject(&ledController);
+#ifdef LEVEL_SUPPORT
+  InitialBroadcastSupport::registerObject(&levelController);
+#else
+  LOG_PRINTLN(F("No Level support"));
+#endif
 
   LOG_PRINTLN(F("Init complete"));
 }

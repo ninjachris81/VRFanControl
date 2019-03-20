@@ -3,7 +3,7 @@
 
 #include "AbstractTask.h"
 #include <SPI.h>
-#include <Ethernet2.h>
+#include <Ethernet.h>
 #include "CommHandler.h"
 //#include <WebSocketsServer.h>
 
